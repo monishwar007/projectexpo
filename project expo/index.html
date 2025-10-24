@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoStudy: Smart Learning</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Custom Tailwind theme configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#22543D', // Dark Forest Green
+                            'dark': '#1A4331', // Darker
+                            'light': '#38A169', // Lighter Green
+                        },
+                        secondary: '#F0FFF4', // Very light green
+                        accent: '#F6E05E', // Yellow accent
+                    },
+                },
+            },
+        };
+    </script>
+    
+    <style>
+        /* Small style tweaks */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+        /* Active nav item style */
+        .nav-item.active {
+            background-color: #1A4331; /* primary-dark */
+            box-shadow: inset 3px 0 0 0 #F6E05E; /* accent */
+        }
+        /* Chat bubble styles */
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+        }
+        .chat-bubble-user {
+            background-color: #38A169; /* primary-light */
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+            align-self: flex-end;
+        }
+        .chat-bubble-bot {
+            background-color: #E2E8F0;
+            color: #1A202C;
+            border-bottom-left-radius: 0.25rem;
+            align-self: flex-start;
+        }
+        /* Bot typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            background-color: #909090;
+            display: inline-block;
+            margin: 0 2px;
+            animation: bounce 1s infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 antialiased">
+
+    <!-- 
+      ================================================================
+      LOGIN PAGE
+      This is shown by default. It's hidden when login is successful.
+      ================================================================
+    -->
+    <div id="login-page" class="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-secondary">
+        <div class="w-full max-w-md rounded-xl bg-white p-8 shadow-2xl">
+            <div class="mb-6 flex flex-col items-center">
+                <i data-lucide="leaf" class="h-16 w-16 text-primary"></i>
+                <h1 class="mt-4 text-3xl font-bold text-primary">EcoStudy</h1>
+                <p class="text-gray-600">Smart Learning for a Greener Future</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="email" value="student@ecostudy.com" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" value="password" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" required>
+                </div>
+                <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-primary p-3 text-lg font-semibold text-white shadow-lg transition duration-300 ease-in-out hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-75">
+                    <i data-lucide="log-in" class="mr-2 h-5 w-5"></i>
+                    Login
+                </button>
+            </form>
+            <p class="mt-6 text-center text-sm text-gray-500">
+                Don't have an account? <a href="#" class="font-medium text-primary-light hover:underline">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 
+      ================================================================
+      MAIN APPLICATION
+      This is hidden by default and shown after login.
+      ================================================================
+    -->
+    <div id="main-app" class="hidden h-screen md:flex">
+        
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="fixed z-40 h-full w-64 -translate-x-full transform bg-primary text-white shadow-lg transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
+            <!-- Logo -->
+            <div class="flex h-20 items-center justify-center px-6">
+                <i data-lucide="leaf" class="h-8 w-8"></i>
+                <span class="ml-3 text-2xl font-bold">EcoStudy</span>
+            </div>
+            
+            <!-- Nav Links -->
+            <ul class="flex flex-col space-y-2 p-4">
+                <li>
+                    <a href="#" class="nav-item active flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="dashboard">
+                        <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
+                        <span class="ml-4 font-medium">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="materials">
+                        <i data-lucide="book-open" class="h-5 w-5"></i>
+                        <span class="ml-4 font-medium">Study Materials</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="ecobot">
+                        <i data-lucide="bot" class="h-5 w-5"></i>
+                        <span class="ml-4 font-medium">EcoBot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="leaderboard">
+                        <i data-lucide="trophy" class="h-5 w-5"></i>
+                        <span class="ml-4 font-medium">Leaderboard</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Logout Button -->
+            <!-- 
+            <div class="absolute bottom-0 w-full p-4">
+                <a href="#" id="logout-button" class="flex w-full items-center rounded-lg p-3 text-red-300 transition-colors duration-200 hover:bg-red-800 hover:text-white">
+                    <i data-lucide="log-out" class="h-5 w-5"></i>
+                    <span class="ml-4 font-medium">Logout</span>
+                </a>
+            </div>
+            -->
+        </nav>
+
+        <!-- Mobile Overlay -->
+        <div id="overlay" class="fixed inset-0 z-30 hidden bg-black/50 md:hidden"></div>
+        
+        <!-- Main Content Area -->
+        <div class="flex flex-1 flex-col overflow-hidden">
+            
+            <!-- Content Header -->
+            <header class="flex h-20 w-full items-center justify-between border-b bg-white p-6 shadow-sm">
+                <div class="flex items-center">
+                    <!-- Burger Menu (Mobile) -->
+                    <button id="burger-btn" class="mr-4 rounded-md p-2 text-gray-600 md:hidden">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                    <!-- Page Title -->
+                    <h1 id="page-title" class="text-3xl font-bold text-gray-800">Dashboard</h1>
+                </div>
+                
+                <!-- Green Points & User Menu -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center rounded-full bg-secondary p-2 pr-4 shadow-inner">
+                        <i data-lucide="leaf" class="h-6 w-6 text-primary-light"></i>
+                        <span class="ml-2 font-semibold text-primary">
+                            <span id="green-points-display">1,250</span> GP
+                        </span>
+                    </div>
+                    
+                    <!-- User Menu Dropdown -->
+                    <div class="relative">
+                        <button id="user-menu-button">
+                            <img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="User Avatar" class="h-10 w-10 rounded-full border-2 border-primary-light transition-transform duration-200 hover:scale-105">
+                        </button>
+                        
+                        <!-- Dropdown Panel -->
+                        <div id="user-menu-dropdown" class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white py-2 shadow-lg ring-1 ring-black ring-opacity-5 hidden">
+                            <div class="border-b px-4 py-3">
+                                <p class="text-sm font-medium text-gray-900">Student</p>
+                                <p class="truncate text-sm text-gray-500">student@ecostudy.com</p>
+                            </div>
+                            <ul class="py-1">
+                                <li>
+                                    <a href="#" class="nav-item flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100" data-page="profile">
+                                        <i data-lucide="user" class="mr-3 h-5 w-5 text-gray-500"></i>
+                                        My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" id="switch-account-button" class="flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100">
+                                        <i data-lucide="users" class="mr-3 h-5 w-5 text-gray-500"></i>
+                                        Switch Account
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="border-t py-1">
+                                <li>
+                                    <a href="#" id="logout-button" class="flex w-full items-center px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50">
+                                        <i data-lucide="log-out" class="mr-3 h-5 w-5"></i>
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <main id="content-area" class="flex-1 overflow-y-auto bg-gray-100 p-6 md:p-10">
+                
+                <!-- 
+                  ========================================
+                  DASHBOARD PAGE
+                  ========================================
+                -->
+                <div id="page-dashboard" class="page-content space-y-8">
+                    <h2 class="text-2xl font-semibold text-gray-700">Welcome back, Student!</h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-500">Green Points</span>
+                                <i data-lucide="leaf" class="h-6 w-6 text-primary-light"></i>
+                            </div>
+                            <p class="mt-2 text-3xl font-bold text-gray-800">1,250</p>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-500">Courses Completed</span>
+                                <i data-lucide="check-circle" class="h-6 w-6 text-blue-500"></i>
+                            </div>
+                            <p class="mt-2 text-3xl font-bold text-gray-800">5</p>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-500">Files Uploaded</span>
+                                <i data-lucide="file-up" class="h-6 w-6 text-indigo-500"></i>
+                            </div>
+                            <p class="mt-2 text-3xl font-bold text-gray-800">12</p>
+                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-500">EcoBot Chats</span>
+                                <i data-lucide="bot" class="h-6 w-6 text-pink-500"></i>
+                            </div>
+                            <p class="mt-2 text-3xl font-bold text-gray-800">42</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Access & Offline Mode -->
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-2">
+                            <h3 class="mb-4 text-xl font-semibold text-gray-700">Quick Access</h3>
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="materials">
+                                    <i data-lucide="book-open" class="h-8 w-8 text-primary"></i>
+                                    <div class="ml-4">
+                                        <h4 class="font-bold text-primary">Study Materials</h4>
+                                        <p class="text-sm text-gray-600">Browse your courses and files</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="ecobot">
+                                    <i data-lucide="bot" class="h-8 w-8 text-primary"></i>
+                                    <div class="ml-4">
+                                        <h4 class="font-bold text-primary">Chat with EcoBot</h4>
+                                        <p class="text-sm text-gray-600">Ask questions and get help</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Offline Mode Card -->
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <h3 class="mb-4 text-xl font-semibold text-gray-700">Offline Learning</h3>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Enable Offline Mode</span>
+                                <!-- Toggle Switch -->
+                                <label for="offline-toggle" class="relative inline-flex cursor-pointer items-center">
+                                    <input type="checkbox" id="offline-toggle" class="peer sr-only">
+                                    <div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-light peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-200"></div>
+                                </label>
+                            </div>
+                            <p class="mt-4 text-sm text-gray-500">
+                                This will download your essential materials for access without an internet connection.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ✨ GEMINI API FEATURE: Eco-Tip of the Day -->
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="sparkles" class="h-6 w-6 text-accent"></i>
+                                <h3 class="ml-3 text-xl font-semibold text-gray-700">✨ Eco-Tip of the Day</h3>
+                            </div>
+                            <div id="eco-tip-content" class="mt-4 text-gray-600">
+                                <!-- Loading Skeleton -->
+                                <div id="eco-tip-loader" class="space-y-2">
+                                    <div class="h-4 w-full animate-pulse rounded bg-gray-200"></div>
+                                    <div class="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
+                                </div>
+                                <!-- Tip Content -->
+                                <p id="eco-tip-text" class="hidden"></p>
+                                <!-- Error Message -->
+                                <p id="eco-tip-error" class="hidden text-red-500">Could not load tip. Please try again later.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 
+                  ========================================
+                  STUDY MATERIALS PAGE
+                  ========================================
+                -->
+                <div id="page-materials" class="page-content hidden space-y-6">
+                    
+                    <!-- This div will hold the main course grid and file uploads -->
+                    <div id="course-grid" class="space-y-6">
+                        <h2 class="text-2xl font-semibold text-gray-700">My Courses</h2>
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            <!-- Course Card 1 -->
+                            <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
+                                <i data-lucide="sun-moon" class="h-12 w-12 text-primary-light"></i>
+                                <h3 class="mt-4 text-xl font-bold text-gray-800">Introduction to Ecology</h3>
+                                <p class="mt-2 text-sm text-gray-600">Learn the fundamental principles of ecology, ecosystems, and biodiversity.</p>
+                                <div class="mt-4">
+                                    <span class="text-xs font-semibold text-gray-500">Progress</span>
+                                    <div class="mt-1 w-full rounded-full bg-gray-200">
+                                        <div class="rounded-full bg-primary-light p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 75%">75%</div>
+                                    </div>
+                                </div>
+                                <a href="#" class="course-link mt-4 inline-block font-medium text-primary-light hover:underline" data-course="ecology">Continue Learning &rarr;</a>
+                            </div>
+
+                            <!-- Course Card 2 -->
+                            <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
+                                <i data-lucide="wind" class="h-12 w-12 text-blue-500"></i>
+                                <h3 class="mt-4 text-xl font-bold text-gray-800">Renewable Energy</h3>
+                                <p class="mt-2 text-sm text-gray-600">Explore solar, wind, and geothermal energy sources and their impact.</p>
+                                <div class="mt-4">
+                                    <span class="text-xs font-semibold text-gray-500">Progress</span>
+                                    <div class="mt-1 w-full rounded-full bg-gray-200">
+                                        <div class="rounded-full bg-blue-500 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 40%">40%</div>
+                                    </div>
+                                </div>
+                                <a href="#" class="course-link mt-4 inline-block font-medium text-blue-500 hover:underline" data-course="renewable">Start Course &rarr;</a>
+                            </div>
+
+                            <!-- Course Card 3 -->
+                            <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
+                                <i data-lucide="sprout" class="h-12 w-12 text-green-600"></i>
+                                <h3 class="mt-4 text-xl font-bold text-gray-800">Sustainable Agriculture</h3>
+                                <p class="mt-2 text-sm text-gray-600">Discover methods for farming in harmony with nature.</p>
+                                <div class="mt-4">
+                                    <span class="text-xs font-semibold text-gray-500">Progress</span>
+                                    <div class="mt-1 w-full rounded-full bg-gray-200">
+                                        <div class="rounded-full bg-green-600 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 10%">10%</div>
+                                    </div>
+                                </div>
+                                <a href="#" class="course-link mt-4 inline-block font-medium text-green-600 hover:underline" data-course="agriculture">Start Course &rarr;</a>
+                            </div>
+                        </div>
+
+                        <div class="my-8 border-t border-gray-200"></div>
+
+                        <!-- File Uploads Section -->
+                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                            <!-- File Upload Zone -->
+                            <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-1">
+                                <h3 class="mb-4 text-xl font-semibold text-gray-700">Upload New File</h3>
+                                <input type="file" id="file-upload" class="hidden" multiple>
+                                <div id="dropzone" class="flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary-light hover:bg-secondary">
+                                    <i data-lucide="upload-cloud" class="h-12 w-12 text-gray-400"></i>
+                                    <p class="mt-2 text-sm text-gray-600">Drag & drop files here</p>
+                                    <p class="text-xs text-gray-500">or click to browse</p>
+                                </div>
+                            </div>
+
+                            <!-- File List -->
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-2">
+                                <h3 class="border-b p-6 text-xl font-semibold text-gray-700">My Uploaded Files</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Name</th>
+                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Type</th>
+                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Size</th>
+                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="file-list" class="divide-y divide-gray-200">
+                                            <!-- Pre-added mock files -->
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="flex items-center px-4 py-3">
+                                                    <i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i>
+                                                    <span class="ml-3 font-medium text-gray-800">Ecology_Final_Notes.pdf</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-600">PDF Document</td>
+                                                <td class="px-4 py-3 text-sm text-gray-600">2.5 MB</td>
+                                                <td class="px-4 py-3">
+                                                    <button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary">
+                                                        <i data-lucide="download" class="h-5 w-5"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="flex items-center px-4 py-3">
+                                                    <i data-lucide="image" class="h-5 w-5 text-gray-500"></i>
+                                                    <span class="ml-3 font-medium text-gray-800">Food_Web_Diagram.png</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-600">Image</td>
+                                                <td class="px-4 py-3 text-sm text-gray-600">0.8 MB</td>
+                                                <td class="px-4 py-3">
+                                                    <button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary">
+                                                        <i data-lucide="download" class="h-5 w-5"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- End of #course-grid -->
+
+                    <!-- This div will hold the details for a single course (hidden by default) -->
+                    <div id="course-details-view" class="hidden space-y-6">
+                        <!-- Back Button -->
+                        <button id="back-to-courses-btn" class="flex items-center text-sm font-medium text-gray-600 transition hover:text-primary">
+                            <i data-lucide="arrow-left" class="mr-2 h-4 w-4"></i>
+                            Back to Study Materials
+                        </button>
+                        
+                        <!-- Course Header -->
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <h2 id="course-detail-title" class="text-3xl font-bold text-gray-800"></h2>
+                            <p id="course-detail-desc" class="mt-2 text-gray-600"></p>
+                            <div class="mt-4">
+                                <span class="text-xs font-semibold text-gray-500">Progress</span>
+                                <div class="mt-1 w-full rounded-full bg-gray-200">
+                                    <div id="course-detail-progress" class="rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Course Content Layout -->
+                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+                            <!-- Module/Lesson List -->
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-1">
+                                <h3 class="border-b p-4 text-lg font-semibold text-gray-700">Course Modules</h3>
+                                <ul id="course-module-list" class="divide-y divide-gray-200 p-2">
+                                    <!-- Modules will be populated by JS -->
+                                </ul>
+                            </div>
+                            
+                            <!-- Main Content (Video/Text) -->
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-3">
+                                <h3 id="course-content-title" class="border-b p-6 text-xl font-semibold text-gray-700"></h3>
+                                <div class="p-6 space-y-4">
+                                    <!-- Mock Video Player -->
+                                    <div class="aspect-video w-full rounded-lg bg-gray-900 flex items-center justify-center text-white">
+                                        <i data-lucide="play" class="h-16 w-16 text-white/70"></i>
+                                    </div>
+                                    
+                                    <!-- Lesson Text -->
+                                    <h4 class="text-lg font-semibold text-gray-800">About this lesson</h4>
+                                    <p id="course-content-text" class="text-gray-600 leading-relaxed"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- End of #course-details-view -->
+
+                </div>
+
+                <!-- 
+                  ========================================
+                  ECOBOT PAGE
+                  ========================================
+                -->
+                <div id="page-ecobot" class="page-content hidden">
+                    <div class="flex h-[calc(100vh-10rem)] flex-col rounded-xl bg-white shadow-lg">
+                        <!-- Chat Header -->
+                        <div class="flex items-center space-x-3 border-b p-4">
+                            <div class="relative flex h-12 w-12 items-center justify-center rounded-full bg-primary-light">
+                                <i data-lucide="bot" class="h-6 w-6 text-white"></i>
+                                <span class="absolute -bottom-1 -right-1 rounded-full border-2 border-white bg-green-500 p-1.5"></span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">EcoBot</h3>
+                                <p class="text-sm text-green-600">Online</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Window -->
+                        <div id="chat-window" class="flex-1 space-y-4 overflow-y-auto p-6">
+                            <!-- Initial Bot Message -->
+                            <div class="flex">
+                                <div class="chat-bubble chat-bubble-bot">
+                                    Hello! I'm EcoBot, powered by Gemini. I can help you with questions about ecology, your courses, or sustainability. Ask me anything!
+                                </div>
+                            </div>
+                            <!-- Bot Typing Indicator (template) -->
+                            <div id="bot-typing" class="flex hidden">
+                                <div class="chat-bubble chat-bubble-bot">
+                                    <div class="typing-indicator">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Input Form -->
+                        <form id="chat-form" class="flex items-center space-x-2 border-t bg-gray-50 p-4">
+                            <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 rounded-full border-gray-300 p-3 px-5 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" autocomplete="off">
+                            <button type="submit" class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white transition duration-300 hover:bg-primary-dark">
+                                <i data-lucide="send" class="h-6 w-6"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 
+                  ========================================
+                  LEADERBOARD PAGE
+                  ========================================
+                -->
+                <div id="page-leaderboard" class="page-content hidden space-y-6">
+                    <div class="rounded-xl bg-white p-6 text-center shadow-lg">
+                        <i data-lucide="award" class="mx-auto h-16 w-16 text-accent"></i>
+                        <h2 class="mt-4 text-3xl font-bold text-gray-800">Top Students</h2>
+                        <p class="mt-2 text-gray-600">See who's leading the way in sustainability!</p>
+                    </div>
+                    
+                    <!-- Leaderboard Table -->
+                    <div class="overflow-hidden rounded-xl bg-white shadow-lg">
+                        <table class="w-full text-left">
+                            <thead class="border-b bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-sm font-semibold text-gray-600">Rank</th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-gray-600">Student</th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-gray-600">Green Points</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <!-- Mock Data -->
+                                <tr class="font-semibold hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-lg">
+                                        <i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-500"></i>1
+                                    </td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/F6E05E/000000?text=A" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-gray-800">Alex Johnson</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-lg text-gray-800">3,450 GP</td>
+                                </tr>
+                                <tr class="font-semibold hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-lg">
+                                        <i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-gray-400"></i>2
+                                    </td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/C0C0C0/FFFFFF?text=M" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-gray-800">Maria Garcia</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-lg text-gray-800">3,120 GP</td>
+                                </tr>
+                                <tr class="font-semibold hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-lg">
+                                        <i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-700"></i>3
+                                    </td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/CD7F32/FFFFFF?text=C" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-gray-800">Chen Wei</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-lg text-gray-800">2,980 GP</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-gray-700">4</td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/4A90E2/FFFFFF?text=R" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-gray-700">Ravi Patel</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">2,500 GP</td>
+                                </tr>
+                                <!-- Current User Highlight -->
+                                <tr class="bg-secondary font-bold ring-2 ring-primary-light hover:bg-green-100">
+                                    <td class="px-6 py-4 text-primary">5</td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-primary">Student (You)</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-primary">1,250 GP</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-gray-700">6</td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/E37B40/FFFFFF?text=E" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-gray-700">Emily Davis</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">980 GP</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-gray-700">7</td>
+                                    <td class="flex items-center px-6 py-4">
+                                        <img src="https://placehold.co/40x40/8E44AD/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full">
+                                        <span class="ml-3 text-gray-700">Sam Okoye</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">760 GP</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 
+                  ========================================
+                  PROFILE PAGE
+                  ========================================
+                -->
+                <div id="page-profile" class="page-content hidden space-y-6">
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <!-- Profile Card -->
+                        <div class="rounded-xl bg-white p-6 text-center shadow-lg lg:col-span-1">
+                            <img src="https://placehold.co/128x128/38A169/FFFFFF?text=S" alt="User Avatar" class="mx-auto h-32 w-32 rounded-full border-4 border-primary-light">
+                            
+                            <!-- View Name -->
+                            <h2 id="profile-name-view" class="mt-4 text-2xl font-bold text-gray-800">Student</h2>
+                            <!-- Edit Name -->
+                            <input id="profile-name-edit" type="text" class="hidden mt-4 w-full rounded-lg border-gray-300 p-2 text-center text-2xl font-bold text-gray-800 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="Student">
+                            
+                            <!-- View Email -->
+                            <p id="profile-email-view" class="text-gray-500">student@ecostudy.com</p>
+                            <!-- Edit Email -->
+                            <input id="profile-email-edit" type="email" class="hidden w-full rounded-lg border-gray-300 p-2 text-center text-gray-500 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="student@ecostudy.com">
+                            
+                            <!-- View Title -->
+                            <p id="profile-title-view" class="mt-2 text-sm text-primary-light">Ecology Enthusiast</p>
+                            <!-- Edit Title -->
+                            <input id="profile-title-edit" type="text" class="hidden mt-2 w-full rounded-lg border-gray-300 p-2 text-center text-sm text-primary-light shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="Ecology Enthusiast">
+                            
+                            <button id="edit-profile-button" data-mode="view" class="mt-6 w-full rounded-lg bg-primary px-4 py-2 font-semibold text-white transition duration-300 hover:bg-primary-dark">
+                                <i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>
+                                <span>Edit Profile</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Stats & Bio -->
+                        <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-2">
+                            <h3 class="mb-4 text-xl font-semibold text-gray-700">About Me</h3>
+                            
+                            <!-- View Bio -->
+                            <p id="profile-bio-view" class="text-gray-600">
+                                Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.
+                            </p>
+                            <!-- Edit Bio -->
+                            <textarea id="profile-bio-edit" class="hidden h-32 w-full rounded-lg border-gray-300 p-2 text-gray-600 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50">Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.</textarea>
+                            
+                            <div class="my-6 border-t border-gray-200"></div>
+                            
+                            <h3 class="mb-4 text-xl font-semibold text-gray-700">My EcoStudy Stats</h3>
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                <div class="rounded-lg bg-secondary p-4 text-center">
+                                    <i data-lucide="leaf" class="mx-auto h-8 w-8 text-primary-light"></i>
+                                    <p class="mt-2 text-xl font-bold text-primary">1,250</p>
+                                    <p class="text-sm text-gray-600">Green Points</p>
+                                </div>
+                                <div class="rounded-lg bg-secondary p-4 text-center">
+                                    <i data-lucide="check-circle" class="mx-auto h-8 w-8 text-blue-500"></i>
+                                    <p class="mt-2 text-xl font-bold text-blue-600">5</p>
+                                    <p class="text-sm text-gray-600">Courses Done</p>
+                                </div>
+                                <div class="rounded-lg bg-secondary p-4 text-center">
+                                    <i data-lucide="file-up" class="mx-auto h-8 w-8 text-indigo-500"></i>
+                                    <p class="mt-2 text-xl font-bold text-indigo-600">12</p>
+                                    <p class="text-sm text-gray-600">Files Uploaded</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Icon Initialization ---
+            // lucide.createIcons(); // This call is redundant and causes an error
+                                  // The script auto-initializes on load.
+
+            // --- Element Selectors ---
+            const loginPage = document.getElementById('login-page');
+            const mainApp = document.getElementById('main-app');
+            const loginForm = document.getElementById('login-form');
+            const logoutButton = document.getElementById('logout-button');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const burgerBtn = document.getElementById('burger-btn');
+            const navItems = document.querySelectorAll('.nav-item');
+            const pageContents = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('page-title');
+            
+            // --- User Menu Elements ---
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+            const switchAccountButton = document.getElementById('switch-account-button');
+            
+            // --- Page Content Elements ---
+            const fileUpload = document.getElementById('file-upload');
+            const dropzone = document.getElementById('dropzone');
+            const fileList = document.getElementById('file-list');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatWindow = document.getElementById('chat-window');
+            const botTyping = document.getElementById('bot-typing');
+
+            // --- Study Materials Page Elements ---
+            const courseGrid = document.getElementById('course-grid');
+            const courseDetailsView = document.getElementById('course-details-view');
+            const courseLinks = document.querySelectorAll('.course-link');
+            const backToCoursesBtn = document.getElementById('back-to-courses-btn');
+            const courseDetailTitle = document.getElementById('course-detail-title');
+            const courseDetailDesc = document.getElementById('course-detail-desc');
+            const courseDetailProgress = document.getElementById('course-detail-progress');
+            const courseModuleList = document.getElementById('course-module-list');
+            const courseContentTitle = document.getElementById('course-content-title');
+            const courseContentText = document.getElementById('course-content-text');
+
+            // --- Gemini API Elements ---
+            const ecoTipLoader = document.getElementById('eco-tip-loader');
+            const ecoTipText = document.getElementById('eco-tip-text');
+            const ecoTipError = document.getElementById('eco-tip-error');
+
+            // --- Profile Page Elements ---
+            const editProfileButton = document.getElementById('edit-profile-button');
+            const profileNameView = document.getElementById('profile-name-view');
+            const profileNameEdit = document.getElementById('profile-name-edit');
+            const profileEmailView = document.getElementById('profile-email-view');
+            const profileEmailEdit = document.getElementById('profile-email-edit');
+            const profileTitleView = document.getElementById('profile-title-view');
+            const profileTitleEdit = document.getElementById('profile-title-edit');
+            const profileBioView = document.getElementById('profile-bio-view');
+            const profileBioEdit = document.getElementById('profile-bio-edit');
+
+            // --- State ---
+            let currentPage = 'dashboard';
+
+            // --- Mock Course Data ---
+            const courses = {
+                'ecology': {
+                    title: 'Introduction to Ecology',
+                    description: 'Learn the fundamental principles of ecology, ecosystems, and biodiversity.',
+                    progress: '75%',
+                    progressColor: 'bg-primary-light',
+                    modules: [
+                        { title: 'Module 1: What is Ecology?', status: 'completed', icon: 'check-circle' },
+                        { title: 'Module 2: Ecosystems', status: 'active', icon: 'play-circle' },
+                        { title: 'Module 3: Biodiversity', status: 'locked', icon: 'lock' },
+                        { title: 'Module 4: Final Quiz', status: 'locked', icon: 'lock' },
+                    ],
+                    content: {
+                        'Module 1: What is Ecology?': 'Ecology is the scientific study of the interactions between organisms and their environment. This module introduces the core concepts, from individual organisms to populations, communities, and entire ecosystems.',
+                        'Module 2: Ecosystems': 'An ecosystem includes all the living things (plants, animals, organisms) in a given area, interacting with each other, and also with their non-living environments (weather, earth, sun, soil, climate, atmosphere).',
+                        'Module 3: Biodiversity': 'Biodiversity is the variety of life on Earth, in all its forms, from genes and bacteria to entire ecosystems such as forests or coral reefs. (Content locked).',
+                        'Module 4: Final Quiz': 'Test your knowledge on the core principles of ecology. (Content locked).',
+                    }
+                },
+                'renewable': {
+                    title: 'Renewable Energy',
+                    description: 'Explore solar, wind, and geothermal energy sources and their impact.',
+                    progress: '40%',
+                    progressColor: 'bg-blue-500',
+                    modules: [
+                        { title: 'Module 1: Solar Power', status: 'completed', icon: 'check-circle' },
+                        { title: 'Module 2: Wind Energy', status: 'active', icon: 'play-circle' },
+                        { title: 'Module 3: Geothermal', status: 'locked', icon: 'lock' },
+                    ],
+                    content: {
+                        'Module 1: Solar Power': 'Solar power is the conversion of energy from sunlight into electricity, either directly using photovoltaics (PV), or indirectly using concentrated solar power.',
+                        'Module 2: Wind Energy': 'Wind energy or wind power is the use of wind to provide mechanical power through wind turbines to turn electric generators for electrical power.',
+                        'Module 3: Geothermal': 'Geothermal energy is thermal energy generated and stored in the Earth. (Content locked).',
+                    }
+                },
+                'agriculture': {
+                    title: 'Sustainable Agriculture',
+                    description: 'Discover methods for farming in harmony with nature.',
+                    progress: '10%',
+                    progressColor: 'bg-green-600',
+                    modules: [
+                        { title: 'Module 1: Introduction', status: 'active', icon: 'play-circle' },
+                        { title: 'Module 2: Soil Health', status: 'locked', icon: 'lock' },
+                        { title: 'Module 3: Water Mgt.', status: 'locked', icon: 'lock' },
+                    ],
+                    content: {
+                        'Module 1: Introduction': 'Sustainable agriculture is farming in sustainable ways meeting society\'s present food and textile needs, without compromising the ability for current or future generations to meet their needs.',
+                        'Module 2: Soil Health': 'Soil health is the continued capacity of soil to function as a vital living ecosystem that sustains plants, animals, and humans. (Content locked).',
+                        'Module 3: Water Mgt.': 'Sustainable water management in agriculture involves practices that conserve water, reduce pollution, and recharge groundwater. (Content locked).',
+                    }
+                }
+            };
+
+            // --- Functions ---
+            
+            /**
+             * =================================================================
+             * ✨ GEMINI API HELPER FUNCTION
+             * =================================================================
+             * Calls the Gemini API with exponential backoff.
+             * @param {string} userQuery - The user's prompt.
+             * @param {string} systemPrompt - The system instruction for the model.
+             * @param {number} retries - Internal retry counter.
+             * @param {number} delay - Internal delay counter.
+             * @returns {Promise<string>} - The generated text response.
+             */
+            async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) {
+                const apiKey = ""; // Leave empty, will be handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    },
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && retries > 0) { // Throttling
+                            // Don't log to console, just retry
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
+                        }
+                        throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        return candidate.content.parts[0].text;
+                    } else {
+                        throw new Error("Invalid response structure from API.");
+                    }
+                } catch (error) {
+                    if (retries > 0) {
+                        // Don't log to console, just retry
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
+                    }
+                    console.error("Gemini API call failed:", error.message);
+                    throw error; // Re-throw after retries are exhausted
+                }
+            }
+            
+            /**
+             * =================================================================
+             * ✨ GEMINI API FEATURE: Fetch Eco-Tip of the Day
+             * =================================================================
+             */
+            async function fetchEcoTip() {
+                if (!ecoTipLoader || !ecoTipText || !ecoTipError) return;
+
+                ecoTipLoader.classList.remove('hidden');
+                ecoTipText.classList.add('hidden');
+                ecoTipError.classList.add('hidden');
+                
+                const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown.";
+                const userQuery = "Give me today's eco-tip.";
+
+                try {
+                    const tip = await callGeminiAPI(userQuery, systemPrompt);
+                    ecoTipText.textContent = tip;
+                    ecoTipText.classList.remove('hidden');
+                } catch (error) {
+                    ecoTipError.classList.remove('hidden');
+                } finally {
+                    ecoTipLoader.classList.add('hidden');
+                }
+            }
+
+
+            /**
+             * Toggles the mobile sidebar menu
+             */
+            function toggleMobileMenu() {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+
+            /**
+             * Switches the visible page content
+             * @param {string} pageId - The ID of the page to show (e.g., 'dashboard')
+             */
+            function showPage(pageId) {
+                // Hide all pages
+                pageContents.forEach(page => {
+                    page.classList.add('hidden');
+                });
+                
+                // Show the target page
+                const targetPage = document.getElementById(`page-${pageId}`);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                }
+                
+                // Update active nav item
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === pageId) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Update page title
+                let title = '';
+                // Try to find the title from the sidebar first, as it's the source of truth
+                const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`);
+                
+                if (sidebarLink && sidebarLink.querySelector('span')) {
+                    title = sidebarLink.querySelector('span').textContent;
+                } else if (pageId === 'profile') {
+                    // Handle "My Profile" page specifically
+                    title = 'My Profile';
+                } else {
+                    // Fallback for pages not in the sidebar (if any) or dashboard
+                    // If we're clicking a quick-access link, it's better to find the real sidebar link
+                    const mainSidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`);
+                    if (mainSidebarLink && mainSidebarLink.querySelector('span')) {
+                        title = mainSidebarLink.querySelector('span').textContent;
+                    } else {
+                         // Last resort, capitalize the pageId
+                        title = pageId.charAt(0).toUpperCase() + pageId.slice(1);
+                    }
+                }
+                
+                pageTitle.textContent = title;
+                
+                currentPage = pageId;
+                
+                // Close mobile menu if open
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileMenu();
+                }
+
+                // Close user menu if open
+                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
+                    userMenuDropdown.classList.add('hidden');
+                }
+
+                // Re-initialize icons if new ones were added (e.g., in file list)
+                // FIX: Add check for lucide object before calling
+                if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                    // Wrap in setTimeout to avoid race condition with lucide's async init
+                    setTimeout(() => lucide.createIcons(), 0);
+                }
+            }
+            
+            /**
+             * Shows the main course grid
+             */
+            function showCourseGrid() {
+                if (courseGrid && courseDetailsView) {
+                    courseDetailsView.classList.add('hidden');
+                    courseGrid.classList.remove('hidden');
+                }
+                // Set page title back
+                if (pageTitle) {
+                    pageTitle.textContent = 'Study Materials';
+                }
+            }
+
+            /**
+             * Shows the details for a specific course
+             * @param {string} courseId - The ID of the course (e.g., 'ecology')
+             */
+            function showCourse(courseId) {
+                const course = courses[courseId];
+                if (!course || !courseGrid || !courseDetailsView || !pageTitle) return;
+
+                // Hide grid, show details
+                courseGrid.classList.add('hidden');
+                courseDetailsView.classList.remove('hidden');
+
+                // Populate header
+                pageTitle.textContent = course.title; // Update main page title
+                courseDetailTitle.textContent = course.title;
+                courseDetailDesc.textContent = course.description;
+                courseDetailProgress.style.width = course.progress;
+                courseDetailProgress.textContent = course.progress;
+                // Clear old color classes
+                courseDetailProgress.classList.remove('bg-primary-light', 'bg-blue-500', 'bg-green-600');
+                // Add new color class
+                courseDetailProgress.classList.add(course.progressColor);
+
+                // Populate module list
+                courseModuleList.innerHTML = ''; // Clear old modules
+                let activeModuleTitle = '';
+                course.modules.forEach(module => {
+                    let itemClass = 'text-gray-700 hover:bg-gray-50';
+                    let iconColor = 'text-gray-500';
+                    if (module.status === 'active') {
+                        itemClass = 'text-white bg-primary';
+                        iconColor = 'text-white';
+                        activeModuleTitle = module.title;
+                    } else if (module.status === 'completed') {
+                        itemClass = 'text-gray-500 hover:bg-gray-50';
+                        iconColor = 'text-primary-light';
+                    } else if (module.status === 'locked') {
+                        itemClass = 'text-gray-400 cursor-not-allowed';
+                        iconColor = 'text-gray-400';
+                    }
+
+                    const moduleHtml = `
+                        <li class="flex items-center p-3 text-sm font-medium rounded-lg cursor-pointer ${itemClass}" data-module="${module.title}">
+                            <i data-lucide="${module.icon}" class="mr-3 h-5 w-5 ${iconColor}"></i>
+                            <span>${module.title}</span>
+                        </li>
+                    `;
+                    courseModuleList.innerHTML += moduleHtml;
+                });
+
+                // Populate content for the active module
+                if (activeModuleTitle) {
+                    courseContentTitle.textContent = activeModuleTitle;
+                    courseContentText.textContent = course.content[activeModuleTitle];
+                } else {
+                    courseContentTitle.textContent = 'Select a module';
+                    courseContentText.textContent = 'Please select a module from the list to view its content.';
+                }
+                
+                // Re-create icons for the new elements
+                // FIX: Add check for lucide object before calling
+                if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                    // Wrap in setTimeout to avoid race condition
+                    setTimeout(() => lucide.createIcons(), 0);
+                }
+            }
+            
+            /**
+             * Handles file selection/upload
+             * @param {FileList} files - The list of files from the input
+             */
+            function handleFiles(files) {
+                if (!files || !files.length) return;
+                if (!fileList) return; // Add guard clause
+                
+                Array.from(files).forEach(file => {
+                    const fileSize = (file.size / 1024 / 1024).toFixed(2); // in MB
+                    let fileType = file.type;
+                    let icon = 'file';
+
+                    if (fileType.includes('pdf')) {
+                        icon = 'file-text'; fileType = 'PDF Document';
+                    } else if (fileType.includes('image')) {
+                        icon = 'image'; fileType = 'Image';
+                    } else if (fileType.includes('document') || fileType.includes('word')) {
+                        icon = 'file-check-2'; fileType = 'Document';
+                    }
+
+                    const row = `
+                        <tr class="hover:bg-gray-50">
+                            <td class="flex items-center px-4 py-3">
+                                <i data-lucide="${icon}" class="h-5 w-5 text-gray-500"></i>
+                                <span class="ml-3 font-medium text-gray-800">${file.name}</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-600">${fileType}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">${fileSize} MB</td>
+                            <td class="px-4 py-3">
+                                <button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary">
+                                    <i data-lucide="download" class="h-5 w-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    fileList.innerHTML += row;
+                });
+                
+                // Re-create icons for the new rows
+                // FIX: Add check for lucide object before calling
+                if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                    // Wrap in setTimeout to avoid race condition
+                    setTimeout(() => lucide.createIcons(), 0);
+                }
+            }
+            
+            /**
+             * Adds a message to the chat window
+             * @param {string} text - The message content
+             * @param {'user' | 'bot'} sender - The sender of the message
+             */
+            function addChatMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : ''}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}`;
+                bubble.textContent = text;
+                
+                messageDiv.appendChild(bubble);
+                chatWindow.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+            
+            /**
+             * Gets a mock response from the EcoBot
+             * @param {string} userInput - The user's input text
+             */
+            /*
+            function getBotResponse(userInput) {
+                const lowerInput = userInput.toLowerCase();
+                if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+                    return 'Hello there! How can I help you today?';
+                }
+                if (lowerInput.includes('green points')) {
+                    return 'You can earn Green Points by completing courses, participating in quizzes, and uploading helpful study materials!';
+                }
+                if (lowerInput.includes('photosynthesis')) {
+                    return 'Photosynthesis is the process used by plants, algae, and some bacteria to convert light energy into chemical energy, through a process that converts carbon dioxide and water into sugars and oxygen.';
+                }
+                if (lowerInput.includes('offline')) {
+                    return 'You can enable offline mode from your dashboard. This will download your current course materials for access without an internet connection.';
+                }
+                return "That's an interesting question. I'm still learning, but I can search my database for information on that topic.";
+            }
+            */
+
+            // --- Event Listeners ---
+            
+            // Login
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // In a real app, you'd validate credentials here
+                loginPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                mainApp.classList.add('flex'); // Make sure flex is re-added
+                showPage('dashboard'); // Show default page
+                
+                // ✨ Fetch the Eco-Tip of the Day on login
+                fetchEcoTip();
+            });
+
+            // Logout function
+            function doLogout() {
+                mainApp.classList.add('hidden');
+                mainApp.classList.remove('flex');
+                loginPage.classList.remove('hidden');
+                // Close user menu if open
+                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
+                    userMenuDropdown.classList.add('hidden');
+                }
+            }
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    doLogout();
+                });
+            }
+
+            if (switchAccountButton) {
+                switchAccountButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    doLogout();
+                });
+            }
+            
+            // Mobile Menu
+            if (burgerBtn) {
+                burgerBtn.addEventListener('click', toggleMobileMenu);
+            }
+            if (overlay) {
+                overlay.addEventListener('click', toggleMobileMenu);
+            }
+
+            /**
+             * Shows or hides the bot typing indicator
+             * @param {boolean} show - Whether to show or hide the indicator
+             */
+            function showBotTyping(show) {
+                if (botTyping) {
+                    if (show) {
+                        botTyping.classList.remove('hidden');
+                    } else {
+                        botTyping.classList.add('hidden');
+                    }
+                }
+                // Scroll to bottom to show indicator
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            // --- Event Listeners ---
+            
+            // Login
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent window click listener from firing
+                    userMenuDropdown.classList.toggle('hidden');
+                    // Re-run createIcons in case they were in the dropdown
+                    // FIX: Add check for lucide object before calling
+                    if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                        // Wrap in setTimeout to avoid race condition
+                        setTimeout(() => lucide.createIcons(), 0);
+                    }
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            window.addEventListener('click', (e) => {
+                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
+                    if (userMenuButton && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = item.dataset.page;
+                    if (pageId) {
+                        showPage(pageId);
+                    }
+                });
+            });
+
+            // --- Study Materials Page Events ---
+            if (dropzone) {
+                // Click to upload
+                dropzone.addEventListener('click', () => fileUpload.click());
+                
+                // Drag and drop
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('border-primary-light', 'bg-secondary');
+                });
+                dropzone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-primary-light', 'bg-secondary');
+                });
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-primary-light', 'bg-secondary');
+                    handleFiles(e.dataTransfer.files);
+                });
+                
+                // File input change
+                fileUpload.addEventListener('change', (e) => {
+                    handleFiles(e.target.files);
+                });
+            }
+
+            // Course Navigation
+            courseLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const courseId = e.currentTarget.dataset.course;
+                    if (courseId) {
+                        showCourse(courseId);
+                    }
+                });
+            });
+
+            if (backToCoursesBtn) {
+                backToCoursesBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showCourseGrid();
+                });
+            }
+
+            // --- EcoBot Page Events ---
+            if (chatForm) {
+                chatForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const userInput = chatInput.value.trim();
+                    if (userInput) {
+                        addChatMessage(userInput, 'user');
+                        chatInput.value = '';
+                        
+                        // Show typing indicator
+                        showBotTyping(true);
+
+                        // ✨ Define EcoBot persona and call Gemini API
+                        const systemPrompt = "You are EcoBot, a friendly and knowledgeable AI assistant for the EcoStudy platform. Your expertise is in ecology, sustainability, climate change, and environmental science. You are helpful to students. Keep your answers clear, concise, and informative. Use markdown for formatting if needed.";
+                        
+                        try {
+                            const botResponse = await callGeminiAPI(userInput, systemPrompt);
+                            addChatMessage(botResponse, 'bot');
+                        } catch (error) {
+                            addChatMessage("I'm sorry, I'm having trouble connecting right now. Please try again in a moment.", 'bot');
+                        } finally {
+                            // Hide typing indicator
+                            showBotTyping(false);
+                        }
+                    }
+                });
+            }
+            
+            // --- Profile Page Events ---
+            if (editProfileButton) {
+                editProfileButton.addEventListener('click', () => {
+                    const mode = editProfileButton.dataset.mode;
+                    // FIX: Query for 'i' or 'svg' because lucide replaces the 'i' tag with 'svg'
+                    const buttonIcon = editProfileButton.querySelector('i, svg');
+                    const buttonText = editProfileButton.querySelector('span');
+                    
+                    // Elements to toggle
+                    const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView];
+                    const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit];
+
+                    if (mode === 'view') {
+                        // --- Switch to Edit Mode ---
+                        // Copy view data to edit inputs
+                        profileNameEdit.value = profileNameView.textContent.trim();
+                        profileEmailEdit.value = profileEmailView.textContent.trim();
+                        profileTitleEdit.value = profileTitleView.textContent.trim();
+                        profileBioEdit.value = profileBioView.textContent.trim();
+                        
+                        // Toggle visibility
+                        viewElements.forEach(el => el.classList.add('hidden'));
+                        editElements.forEach(el => el.classList.remove('hidden'));
+                        
+                        // Update button
+                        if (buttonIcon) buttonIcon.remove(); // Add null check
+                        editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>');
+                        buttonText.textContent = 'Save Changes';
+                        editProfileButton.dataset.mode = 'edit';
+                        editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
+                        editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400');
+                        // FIX: Add check for lucide object before calling
+                        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                            // Wrap in setTimeout to avoid race condition
+                            setTimeout(() => lucide.createIcons(), 0);
+                        }
+
+                    } else {
+                        // --- Switch to View Mode (Save) ---
+                        // In a real app, you'd save this data to a server here.
+                        
+                        // Copy edit data to view elements
+                        profileNameView.textContent = profileNameEdit.value.trim();
+                        profileEmailView.textContent = profileEmailEdit.value.trim();
+                        profileTitleView.textContent = profileTitleEdit.value.trim();
+                        profileBioView.textContent = profileBioEdit.value.trim();
+                        
+                        // Toggle visibility
+                        viewElements.forEach(el => el.classList.remove('hidden'));
+                        editElements.forEach(el => el.classList.add('hidden'));
+                        
+                        // Update button
+                        if (buttonIcon) buttonIcon.remove(); // Add null check
+                        editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>');
+                        buttonText.textContent = 'Edit Profile';
+                        editProfileButton.dataset.mode = 'view';
+                        editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark');
+                        editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400');
+                        // FIX: Add check for lucide object before calling
+                        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                            // Wrap in setTimeout to avoid race condition
+                            setTimeout(() => lucide.createIcons(), 0);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
