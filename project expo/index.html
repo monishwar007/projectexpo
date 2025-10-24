@@ -458,8 +458,49 @@
             function updateFileCountDisplay() { const fileString = currentUser.filesUploaded.toLocaleString(); if (dashboardFiles) dashboardFiles.textContent = fileString; if (profileFiles) profileFiles.textContent = fileString; }
             function awardGreenPoints(points) { currentUser.greenPoints += points; updateGreenPointsDisplay(); }
             function updateBadges() { if (!badgeDisplay) return; const badges = badgeDisplay.querySelectorAll('.badge'); const gp = currentUser.greenPoints; let iconsNeedUpdate = false; badges.forEach(badge => { const title = badge.getAttribute('title') || ''; let threshold = 0; let targetIconClass = ''; let badgeClass = ''; const iconElement = badge.querySelector('i, svg'); const currentIcon = iconElement ? iconElement.getAttribute('data-lucide') : null; if (title.includes('Eco Starter')) { threshold = 1000; targetIconClass = 'sprout'; badgeClass = 'badge-bronze'; } else if (title.includes('Eco Aware')) { threshold = 2500; targetIconClass = 'leaf'; badgeClass = 'badge-silver'; } else if (title.includes('Eco Champion')) { threshold = 5000; targetIconClass = 'award'; badgeClass = 'badge-gold'; } else if (title.includes('Eco Hero')) { threshold = 10000; targetIconClass = 'shield-check'; badgeClass = 'badge-emerald'; } if (gp >= threshold) { badge.classList.remove('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.add(badgeClass); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } else { badge.classList.add('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.remove('badge-bronze', 'badge-silver', 'badge-gold', 'badge-emerald'); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } }); if (iconsNeedUpdate) { renderLucideIconsInternal(); } } // Use internal directly here
-             async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) { const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=AIzaSyAVwgQHycQ9VWoYpRbGx2AHXXhyKbZYKY0`; const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, }; try { const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { if (response.status === 429 && retries > 0) { await new Promise(resolve => setTimeout(resolve, delay)); return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2); } throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`); } const result = await response.json(); const candidate = result.candidates?.[0]; if (candidate && candidate.content?.parts?.[0]?.text) { return candidate.content.parts[0].text; } else { throw new Error("Invalid response structure from API."); } } catch (error) { if (retries > 0) { await new Promise(resolve => setTimeout(resolve, delay)); return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2); } console.error("Gemini API call failed:", error.message); throw error; } }
-            async function fetchEcoTip() { if (!ecoTipLoader || !ecoTipText || !ecoTipError) return; ecoTipLoader.classList.remove('hidden'); ecoTipText.classList.add('hidden'); ecoTipError.classList.add('hidden'); const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown."; const userQuery = "Give me today's eco-tip."; try { const tip = await callGeminiAPI(userQuery, systemPrompt); ecoTipText.textContent = tip; ecoTipText.classList.remove('hidden'); } catch (error) { ecoTipError.classList.remove('hidden'); } finally { ecoTipLoader.classList.add('hidden'); } }
+             async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) {
+                 // *** API KEY ADDED HERE ***
+                 const apiKey = "AIzaSyAVwgQHycQ9VWoYpRbGx2AHXXhyKbZYKY0";
+                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                 const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, };
+                 try {
+                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                     if (!response.ok) {
+                         if (response.status === 429 && retries > 0) {
+                             await new Promise(resolve => setTimeout(resolve, delay));
+                             return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
+                         }
+                         // Log specific error for bad API key
+                         if (response.status === 400 || response.status === 403) {
+                              console.error(`API Key Error: ${response.statusText} (Status: ${response.status}). Please check if the API key is valid and has permissions.`);
+                         } else {
+                              console.error(`API Error: ${response.statusText} (Status: ${response.status})`);
+                         }
+                         throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`);
+                     }
+                     const result = await response.json();
+                     const candidate = result.candidates?.[0];
+                     if (candidate && candidate.content?.parts?.[0]?.text) {
+                         return candidate.content.parts[0].text;
+                     } else if (result.promptFeedback?.blockReason) {
+                         // Handle blocked content
+                         console.warn(`Gemini response blocked. Reason: ${result.promptFeedback.blockReason}`);
+                         return `My response was blocked due to safety settings. Reason: ${result.promptFeedback.blockReason}. Please try rephrasing your request.`;
+                     } else {
+                         console.error("Invalid response structure:", result);
+                         throw new Error("Invalid response structure from API.");
+                     }
+                 } catch (error) {
+                     if (retries > 0) {
+                         await new Promise(resolve => setTimeout(resolve, delay));
+                         return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
+                     }
+                     console.error("Gemini API call failed after retries:", error.message);
+                     // Provide a more user-friendly error in the chat
+                     throw new Error("Failed to get response from AI assistant after multiple attempts.");
+                 }
+             }
+            async function fetchEcoTip() { if (!ecoTipLoader || !ecoTipText || !ecoTipError) return; ecoTipLoader.classList.remove('hidden'); ecoTipText.classList.add('hidden'); ecoTipError.classList.add('hidden'); const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown."; const userQuery = "Give me today's eco-tip."; try { const tip = await callGeminiAPI(userQuery, systemPrompt); ecoTipText.textContent = tip; ecoTipText.classList.remove('hidden'); } catch (error) { ecoTipError.textContent = "Could not load tip. " + error.message; ecoTipError.classList.remove('hidden'); } finally { ecoTipLoader.classList.add('hidden'); } }
             function toggleMobileMenu() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
             function showPage(pageId) { pageContents.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(`page-${pageId}`); if (targetPage) targetPage.classList.remove('hidden'); navItems.forEach(item => { item.classList.remove('active'); if (item.dataset.page === pageId) item.classList.add('active'); }); let title = ''; const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`); if (sidebarLink && sidebarLink.querySelector('span')) { title = sidebarLink.querySelector('span').textContent; } else if (pageId === 'profile') { title = 'My Profile'; } else { title = pageId.charAt(0).toUpperCase() + pageId.slice(1); } pageTitle.textContent = title; currentPage = pageId; if (!sidebar.classList.contains('-translate-x-full')) toggleMobileMenu(); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); renderLucideIconsInternal(); } // Use internal directly
             function showCourseGrid() { if (courseGrid && courseDetailsView) { courseDetailsView.classList.add('hidden'); courseGrid.classList.remove('hidden'); } if (pageTitle) pageTitle.textContent = 'Study Materials'; }
@@ -521,12 +562,18 @@
                     if (userInput) {
                         addChatMessage(userInput, 'user'); chatInput.value = ''; showBotTyping(true);
                         const systemPrompt = "You are EcoBot, a friendly and knowledgeable AI assistant for the EcoStudy platform. Your expertise is in ecology, sustainability, climate change, and environmental science. You are helpful to students. Keep your answers clear, concise, and informative. Use markdown for formatting if needed.";
-                        try { const botResponse = await callGeminiAPI(userInput, systemPrompt); addChatMessage(botResponse, 'bot'); }
-                        catch (error) { addChatMessage("Sorry, I'm having trouble connecting.", 'bot'); }
-                        finally { showBotTyping(false); }
+                        try {
+                            const botResponse = await callGeminiAPI(userInput, systemPrompt);
+                            addChatMessage(botResponse, 'bot');
+                        } catch (error) {
+                             addChatMessage(error.message || "Sorry, I encountered an error.", 'bot'); // Display the error message from the API call
+                        } finally {
+                            showBotTyping(false);
+                        }
                     }
                 });
             }
+
 
             // Carbon Calculator Event
             if (carbonCalculatorForm) { carbonCalculatorForm.addEventListener('submit', (e) => { e.preventDefault(); calculateFootprint(); }); }
