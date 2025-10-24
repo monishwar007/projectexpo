@@ -7,12 +7,13 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Added defer attribute -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
     <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <script>
         // Custom Tailwind theme configuration
         tailwind.config = {
@@ -30,11 +31,14 @@
                         secondary: '#F0FFF4', // Very light green
                         accent: '#F6E05E', // Yellow accent
                     },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
                 },
             },
         };
     </script>
-    
+
     <style>
         /* Small style tweaks */
         body {
@@ -101,16 +105,32 @@
             0%, 60%, 100% { transform: translateY(0); }
             30% { transform: translateY(-4px); }
         }
+        /* Badge Styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 50%;
+            background-color: #e2e8f0; /* Default gray */
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .badge-bronze { background-color: #CD7F32; color: white; }
+        .badge-silver { background-color: #C0C0C0; color: white; }
+        .badge-gold { background-color: #FFD700; color: #4A5568; }
+        .badge-platinum { background-color: #E5E4E2; color: #2D3748; border-color: #a0aec0; }
+        .badge-emerald { background-color: #2ECC71; color: white; }
+
+        /* Calculator Result */
+        #calculator-result {
+            transition: opacity 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-100 antialiased">
 
-    <!-- 
-      ================================================================
-      LOGIN PAGE
-      This is shown by default. It's hidden when login is successful.
-      ================================================================
-    -->
+    <!-- LOGIN PAGE -->
     <div id="login-page" class="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-secondary">
         <div class="w-full max-w-md rounded-xl bg-white p-8 shadow-2xl">
             <div class="mb-6 flex flex-col items-center">
@@ -118,7 +138,6 @@
                 <h1 class="mt-4 text-3xl font-bold text-primary">EcoStudy</h1>
                 <p class="text-gray-600">Smart Learning for a Greener Future</p>
             </div>
-            
             <form id="login-form">
                 <div class="mb-4">
                     <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email Address</label>
@@ -139,14 +158,9 @@
         </div>
     </div>
 
-    <!-- 
-      ================================================================
-      MAIN APPLICATION
-      This is hidden by default and shown after login.
-      ================================================================
-    -->
+    <!-- MAIN APPLICATION -->
     <div id="main-app" class="hidden h-screen md:flex">
-        
+
         <!-- Sidebar Navigation -->
         <nav id="sidebar" class="fixed z-40 h-full w-64 -translate-x-full transform bg-primary text-white shadow-lg transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
             <!-- Logo -->
@@ -154,584 +168,156 @@
                 <i data-lucide="leaf" class="h-8 w-8"></i>
                 <span class="ml-3 text-2xl font-bold">EcoStudy</span>
             </div>
-            
             <!-- Nav Links -->
             <ul class="flex flex-col space-y-2 p-4">
-                <li>
-                    <a href="#" class="nav-item active flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="dashboard">
-                        <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
-                        <span class="ml-4 font-medium">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="materials">
-                        <i data-lucide="book-open" class="h-5 w-5"></i>
-                        <span class="ml-4 font-medium">Study Materials</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="ecobot">
-                        <i data-lucide="bot" class="h-5 w-5"></i>
-                        <span class="ml-4 font-medium">EcoBot</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="leaderboard">
-                        <i data-lucide="trophy" class="h-5 w-5"></i>
-                        <span class="ml-4 font-medium">Leaderboard</span>
-                    </a>
-                </li>
+                <li><a href="#" class="nav-item active flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="dashboard"><i data-lucide="layout-dashboard" class="h-5 w-5"></i><span class="ml-4 font-medium">Dashboard</span></a></li>
+                <li><a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="materials"><i data-lucide="book-open" class="h-5 w-5"></i><span class="ml-4 font-medium">Study Materials</span></a></li>
+                <li><a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="calculator"><i data-lucide="calculator" class="h-5 w-5"></i><span class="ml-4 font-medium">Carbon Calculator</span></a></li>
+                <li><a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="ecobot"><i data-lucide="bot" class="h-5 w-5"></i><span class="ml-4 font-medium">EcoBot</span></a></li>
+                <li><a href="#" class="nav-item flex items-center rounded-lg p-3 transition-colors duration-200 hover:bg-primary-dark" data-page="leaderboard"><i data-lucide="trophy" class="h-5 w-5"></i><span class="ml-4 font-medium">Leaderboard</span></a></li>
             </ul>
-            
-            <!-- Logout Button -->
-            <!-- 
-            <div class="absolute bottom-0 w-full p-4">
-                <a href="#" id="logout-button" class="flex w-full items-center rounded-lg p-3 text-red-300 transition-colors duration-200 hover:bg-red-800 hover:text-white">
-                    <i data-lucide="log-out" class="h-5 w-5"></i>
-                    <span class="ml-4 font-medium">Logout</span>
-                </a>
-            </div>
-            -->
         </nav>
 
         <!-- Mobile Overlay -->
         <div id="overlay" class="fixed inset-0 z-30 hidden bg-black/50 md:hidden"></div>
-        
+
         <!-- Main Content Area -->
         <div class="flex flex-1 flex-col overflow-hidden">
-            
             <!-- Content Header -->
             <header class="flex h-20 w-full items-center justify-between border-b bg-white p-6 shadow-sm">
                 <div class="flex items-center">
-                    <!-- Burger Menu (Mobile) -->
-                    <button id="burger-btn" class="mr-4 rounded-md p-2 text-gray-600 md:hidden">
-                        <i data-lucide="menu" class="h-6 w-6"></i>
-                    </button>
-                    <!-- Page Title -->
+                    <button id="burger-btn" class="mr-4 rounded-md p-2 text-gray-600 md:hidden"><i data-lucide="menu" class="h-6 w-6"></i></button>
                     <h1 id="page-title" class="text-3xl font-bold text-gray-800">Dashboard</h1>
                 </div>
-                
-                <!-- Green Points & User Menu -->
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center rounded-full bg-secondary p-2 pr-4 shadow-inner">
                         <i data-lucide="leaf" class="h-6 w-6 text-primary-light"></i>
-                        <span class="ml-2 font-semibold text-primary">
-                            <span id="green-points-display">1,250</span> GP
-                        </span>
+                        <span class="ml-2 font-semibold text-primary"><span id="green-points-display">1250</span> GP</span>
                     </div>
-                    
-                    <!-- User Menu Dropdown -->
                     <div class="relative">
                         <button id="user-menu-button">
                             <img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="User Avatar" class="h-10 w-10 rounded-full border-2 border-primary-light transition-transform duration-200 hover:scale-105">
                         </button>
-                        
-                        <!-- Dropdown Panel -->
                         <div id="user-menu-dropdown" class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white py-2 shadow-lg ring-1 ring-black ring-opacity-5 hidden">
                             <div class="border-b px-4 py-3">
-                                <p class="text-sm font-medium text-gray-900">Student</p>
-                                <p class="truncate text-sm text-gray-500">student@ecostudy.com</p>
+                                <p id="dropdown-username" class="text-sm font-medium text-gray-900">Student</p>
+                                <p id="dropdown-email" class="truncate text-sm text-gray-500">student@ecostudy.com</p>
                             </div>
                             <ul class="py-1">
-                                <li>
-                                    <a href="#" class="nav-item flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100" data-page="profile">
-                                        <i data-lucide="user" class="mr-3 h-5 w-5 text-gray-500"></i>
-                                        My Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" id="switch-account-button" class="flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100">
-                                        <i data-lucide="users" class="mr-3 h-5 w-5 text-gray-500"></i>
-                                        Switch Account
-                                    </a>
-                                </li>
+                                <li><a href="#" class="nav-item flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100" data-page="profile"><i data-lucide="user" class="mr-3 h-5 w-5 text-gray-500"></i> My Profile</a></li>
+                                <li><a href="#" id="switch-account-button" class="flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100"><i data-lucide="users" class="mr-3 h-5 w-5 text-gray-500"></i> Switch Account</a></li>
                             </ul>
                             <ul class="border-t py-1">
-                                <li>
-                                    <a href="#" id="logout-button" class="flex w-full items-center px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50">
-                                        <i data-lucide="log-out" class="mr-3 h-5 w-5"></i>
-                                        Logout
-                                    </a>
-                                </li>
+                                <li><a href="#" id="logout-button" class="flex w-full items-center px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"><i data-lucide="log-out" class="mr-3 h-5 w-5"></i> Logout</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </header>
-            
+
             <!-- Page Content -->
             <main id="content-area" class="flex-1 overflow-y-auto bg-gray-100 p-6 md:p-10">
-                
-                <!-- 
-                  ========================================
-                  DASHBOARD PAGE
-                  ========================================
-                -->
+
+                <!-- DASHBOARD PAGE -->
                 <div id="page-dashboard" class="page-content space-y-8">
                     <h2 class="text-2xl font-semibold text-gray-700">Welcome back, Student!</h2>
-                    
-                    <!-- Stats Cards -->
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-500">Green Points</span>
-                                <i data-lucide="leaf" class="h-6 w-6 text-primary-light"></i>
-                            </div>
-                            <p class="mt-2 text-3xl font-bold text-gray-800">1,250</p>
-                        </div>
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-500">Courses Completed</span>
-                                <i data-lucide="check-circle" class="h-6 w-6 text-blue-500"></i>
-                            </div>
-                            <p class="mt-2 text-3xl font-bold text-gray-800">5</p>
-                        </div>
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-500">Files Uploaded</span>
-                                <i data-lucide="file-up" class="h-6 w-6 text-indigo-500"></i>
-                            </div>
-                            <p class="mt-2 text-3xl font-bold text-gray-800">12</p>
-                        </div>
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-500">EcoBot Chats</span>
-                                <i data-lucide="bot" class="h-6 w-6 text-pink-500"></i>
-                            </div>
-                            <p class="mt-2 text-3xl font-bold text-gray-800">42</p>
-                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-500">Green Points</span><i data-lucide="leaf" class="h-6 w-6 text-primary-light"></i></div><p id="dashboard-gp" class="mt-2 text-3xl font-bold text-gray-800">1250</p></div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-500">Courses Completed</span><i data-lucide="check-circle" class="h-6 w-6 text-blue-500"></i></div><p class="mt-2 text-3xl font-bold text-gray-800">5</p></div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-500">Files Uploaded</span><i data-lucide="file-up" class="h-6 w-6 text-indigo-500"></i></div><p id="dashboard-files" class="mt-2 text-3xl font-bold text-gray-800">12</p></div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-500">EcoBot Chats</span><i data-lucide="bot" class="h-6 w-6 text-pink-500"></i></div><p class="mt-2 text-3xl font-bold text-gray-800">42</p></div>
                     </div>
-                    
-                    <!-- Quick Access & Offline Mode -->
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-2">
-                            <h3 class="mb-4 text-xl font-semibold text-gray-700">Quick Access</h3>
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="materials">
-                                    <i data-lucide="book-open" class="h-8 w-8 text-primary"></i>
-                                    <div class="ml-4">
-                                        <h4 class="font-bold text-primary">Study Materials</h4>
-                                        <p class="text-sm text-gray-600">Browse your courses and files</p>
-                                    </div>
-                                </a>
-                                <a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="ecobot">
-                                    <i data-lucide="bot" class="h-8 w-8 text-primary"></i>
-                                    <div class="ml-4">
-                                        <h4 class="font-bold text-primary">Chat with EcoBot</h4>
-                                        <p class="text-sm text-gray-600">Ask questions and get help</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Offline Mode Card -->
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <h3 class="mb-4 text-xl font-semibold text-gray-700">Offline Learning</h3>
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600">Enable Offline Mode</span>
-                                <!-- Toggle Switch -->
-                                <label for="offline-toggle" class="relative inline-flex cursor-pointer items-center">
-                                    <input type="checkbox" id="offline-toggle" class="peer sr-only">
-                                    <div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-light peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-200"></div>
-                                </label>
-                            </div>
-                            <p class="mt-4 text-sm text-gray-500">
-                                This will download your essential materials for access without an internet connection.
-                            </p>
-                        </div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-2"><h3 class="mb-4 text-xl font-semibold text-gray-700">Quick Access</h3><div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="materials"><i data-lucide="book-open" class="h-8 w-8 text-primary"></i><div class="ml-4"><h4 class="font-bold text-primary">Study Materials</h4><p class="text-sm text-gray-600">Browse your courses and files</p></div></a><a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="ecobot"><i data-lucide="bot" class="h-8 w-8 text-primary"></i><div class="ml-4"><h4 class="font-bold text-primary">Chat with EcoBot</h4><p class="text-sm text-gray-600">Ask questions and get help</p></div></a><a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="calculator"><i data-lucide="calculator" class="h-8 w-8 text-primary"></i><div class="ml-4"><h4 class="font-bold text-primary">Carbon Calculator</h4><p class="text-sm text-gray-600">Estimate your footprint</p></div></a></div></div>
+                        <div class="rounded-xl bg-white p-6 shadow-lg"><h3 class="mb-4 text-xl font-semibold text-gray-700">Offline Learning</h3><div class="flex items-center justify-between"><span class="text-gray-600">Enable Offline Mode</span><label for="offline-toggle" class="relative inline-flex cursor-pointer items-center"><input type="checkbox" id="offline-toggle" class="peer sr-only"><div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-light peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-200"></div></label></div><p class="mt-4 text-sm text-gray-500">This will download essential materials.</p></div>
                     </div>
-
-                    <!-- ✨ GEMINI API FEATURE: Eco-Tip of the Day -->
-                    <div class="grid grid-cols-1 gap-6">
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <div class="flex items-center">
-                                <i data-lucide="sparkles" class="h-6 w-6 text-accent"></i>
-                                <h3 class="ml-3 text-xl font-semibold text-gray-700">✨ Eco-Tip of the Day</h3>
-                            </div>
-                            <div id="eco-tip-content" class="mt-4 text-gray-600">
-                                <!-- Loading Skeleton -->
-                                <div id="eco-tip-loader" class="space-y-2">
-                                    <div class="h-4 w-full animate-pulse rounded bg-gray-200"></div>
-                                    <div class="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
-                                </div>
-                                <!-- Tip Content -->
-                                <p id="eco-tip-text" class="hidden"></p>
-                                <!-- Error Message -->
-                                <p id="eco-tip-error" class="hidden text-red-500">Could not load tip. Please try again later.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="grid grid-cols-1 gap-6"><div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center"><i data-lucide="target" class="h-6 w-6 text-primary-light"></i><h3 class="ml-3 text-xl font-semibold text-gray-700">Eco Challenges</h3></div><div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"><div class="rounded-lg border border-gray-200 p-4"><div class="flex items-center"><i data-lucide="recycle" class="h-6 w-6 text-blue-500"></i><h4 class="ml-2 font-semibold text-gray-800">Plastic Free Week</h4></div><p class="mt-2 text-sm text-gray-600">Avoid single-use plastics for 7 days.</p><button class="mt-3 w-full rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 transition hover:bg-blue-200">Join Challenge</button></div><div class="rounded-lg border border-gray-200 p-4"><div class="flex items-center"><i data-lucide="droplet" class="h-6 w-6 text-teal-500"></i><h4 class="ml-2 font-semibold text-gray-800">5-Minute Showers</h4></div><p class="mt-2 text-sm text-gray-600">Keep showers under 5 minutes this week.</p><button class="mt-3 w-full rounded-md bg-teal-100 px-3 py-1 text-sm font-medium text-teal-700 transition hover:bg-teal-200">Join Challenge</button></div><div class="rounded-lg border border-gray-200 p-4"><div class="flex items-center"><i data-lucide="carrot" class="h-6 w-6 text-orange-500"></i><h4 class="ml-2 font-semibold text-gray-800">Meatless Monday</h4></div><p class="mt-2 text-sm text-gray-600">Go vegetarian or vegan for one day.</p><button class="mt-3 w-full rounded-md bg-orange-100 px-3 py-1 text-sm font-medium text-orange-700 transition hover:bg-orange-200">Join Challenge</button></div></div></div></div>
+                    <div class="grid grid-cols-1 gap-6"><div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center"><i data-lucide="sparkles" class="h-6 w-6 text-accent"></i><h3 class="ml-3 text-xl font-semibold text-gray-700">✨ Eco-Tip of the Day</h3></div><div id="eco-tip-content" class="mt-4 text-gray-600"><div id="eco-tip-loader" class="space-y-2"><div class="h-4 w-full animate-pulse-slow rounded bg-gray-200"></div><div class="h-4 w-3/4 animate-pulse-slow rounded bg-gray-200"></div></div><p id="eco-tip-text" class="hidden"></p><p id="eco-tip-error" class="hidden text-red-500">Could not load tip.</p></div></div></div>
                 </div>
 
-                <!-- 
-                  ========================================
-                  STUDY MATERIALS PAGE
-                  ========================================
-                -->
+                <!-- STUDY MATERIALS PAGE -->
                 <div id="page-materials" class="page-content hidden space-y-6">
-                    
-                    <!-- This div will hold the main course grid and file uploads -->
                     <div id="course-grid" class="space-y-6">
                         <h2 class="text-2xl font-semibold text-gray-700">My Courses</h2>
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            <!-- Course Card 1 -->
-                            <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
-                                <i data-lucide="sun-moon" class="h-12 w-12 text-primary-light"></i>
-                                <h3 class="mt-4 text-xl font-bold text-gray-800">Introduction to Ecology</h3>
-                                <p class="mt-2 text-sm text-gray-600">Learn the fundamental principles of ecology, ecosystems, and biodiversity.</p>
-                                <div class="mt-4">
-                                    <span class="text-xs font-semibold text-gray-500">Progress</span>
-                                    <div class="mt-1 w-full rounded-full bg-gray-200">
-                                        <div class="rounded-full bg-primary-light p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 75%">75%</div>
-                                    </div>
-                                </div>
-                                <a href="#" class="course-link mt-4 inline-block font-medium text-primary-light hover:underline" data-course="ecology">Continue Learning &rarr;</a>
-                            </div>
-
-                            <!-- Course Card 2 -->
-                            <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
-                                <i data-lucide="wind" class="h-12 w-12 text-blue-500"></i>
-                                <h3 class="mt-4 text-xl font-bold text-gray-800">Renewable Energy</h3>
-                                <p class="mt-2 text-sm text-gray-600">Explore solar, wind, and geothermal energy sources and their impact.</p>
-                                <div class="mt-4">
-                                    <span class="text-xs font-semibold text-gray-500">Progress</span>
-                                    <div class="mt-1 w-full rounded-full bg-gray-200">
-                                        <div class="rounded-full bg-blue-500 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 40%">40%</div>
-                                    </div>
-                                </div>
-                                <a href="#" class="course-link mt-4 inline-block font-medium text-blue-500 hover:underline" data-course="renewable">Start Course &rarr;</a>
-                            </div>
-
-                            <!-- Course Card 3 -->
-                            <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
-                                <i data-lucide="sprout" class="h-12 w-12 text-green-600"></i>
-                                <h3 class="mt-4 text-xl font-bold text-gray-800">Sustainable Agriculture</h3>
-                                <p class="mt-2 text-sm text-gray-600">Discover methods for farming in harmony with nature.</p>
-                                <div class="mt-4">
-                                    <span class="text-xs font-semibold text-gray-500">Progress</span>
-                                    <div class="mt-1 w-full rounded-full bg-gray-200">
-                                        <div class="rounded-full bg-green-600 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 10%">10%</div>
-                                    </div>
-                                </div>
-                                <a href="#" class="course-link mt-4 inline-block font-medium text-green-600 hover:underline" data-course="agriculture">Start Course &rarr;</a>
-                            </div>
+                             <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="sun-moon" class="h-12 w-12 text-primary-light"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Introduction to Ecology</h3><p class="mt-2 text-sm text-gray-600">Learn fundamental principles...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-primary-light p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 75%">75%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-primary-light hover:underline" data-course="ecology">Continue Learning &rarr;</a></div>
+                             <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="wind" class="h-12 w-12 text-blue-500"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Renewable Energy</h3><p class="mt-2 text-sm text-gray-600">Explore solar, wind, geothermal...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-blue-500 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 40%">40%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-blue-500 hover:underline" data-course="renewable">Start Course &rarr;</a></div>
+                             <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="sprout" class="h-12 w-12 text-green-600"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Sustainable Agriculture</h3><p class="mt-2 text-sm text-gray-600">Discover methods for farming...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-green-600 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 10%">10%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-green-600 hover:underline" data-course="agriculture">Start Course &rarr;</a></div>
                         </div>
-
                         <div class="my-8 border-t border-gray-200"></div>
-
-                        <!-- File Uploads Section -->
                         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                            <!-- File Upload Zone -->
-                            <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-1">
-                                <h3 class="mb-4 text-xl font-semibold text-gray-700">Upload New File</h3>
-                                <input type="file" id="file-upload" class="hidden" multiple>
-                                <div id="dropzone" class="flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary-light hover:bg-secondary">
-                                    <i data-lucide="upload-cloud" class="h-12 w-12 text-gray-400"></i>
-                                    <p class="mt-2 text-sm text-gray-600">Drag & drop files here</p>
-                                    <p class="text-xs text-gray-500">or click to browse</p>
-                                </div>
-                            </div>
-
-                            <!-- File List -->
-                            <div class="rounded-xl bg-white shadow-lg lg:col-span-2">
-                                <h3 class="border-b p-6 text-xl font-semibold text-gray-700">My Uploaded Files</h3>
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-left">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Name</th>
-                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Type</th>
-                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Size</th>
-                                                <th class="px-4 py-3 text-sm font-semibold text-gray-600">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="file-list" class="divide-y divide-gray-200">
-                                            <!-- Pre-added mock files -->
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="flex items-center px-4 py-3">
-                                                    <i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i>
-                                                    <span class="ml-3 font-medium text-gray-800">Ecology_Final_Notes.pdf</span>
-                                                </td>
-                                                <td class="px-4 py-3 text-sm text-gray-600">PDF Document</td>
-                                                <td class="px-4 py-3 text-sm text-gray-600">2.5 MB</td>
-                                                <td class="px-4 py-3">
-                                                    <button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary">
-                                                        <i data-lucide="download" class="h-5 w-5"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="flex items-center px-4 py-3">
-                                                    <i data-lucide="image" class="h-5 w-5 text-gray-500"></i>
-                                                    <span class="ml-3 font-medium text-gray-800">Food_Web_Diagram.png</span>
-                                                </td>
-                                                <td class="px-4 py-3 text-sm text-gray-600">Image</td>
-                                                <td class="px-4 py-3 text-sm text-gray-600">0.8 MB</td>
-                                                <td class="px-4 py-3">
-                                                    <button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary">
-                                                        <i data-lucide="download" class="h-5 w-5"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-1"><h3 class="mb-4 text-xl font-semibold text-gray-700">Upload New File (+10 GP)</h3><input type="file" id="file-upload" class="hidden" multiple><div id="dropzone" class="flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary-light hover:bg-secondary"><i data-lucide="upload-cloud" class="h-12 w-12 text-gray-400"></i><p class="mt-2 text-sm text-gray-600">Drag & drop files here</p><p class="text-xs text-gray-500">or click to browse</p></div></div>
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-2"><h3 class="border-b p-6 text-xl font-semibold text-gray-700">My Uploaded Files</h3><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-gray-50"><tr><th class="px-4 py-3 text-sm font-semibold text-gray-600">Name</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Type</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Size</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Actions</th></tr></thead><tbody id="file-list" class="divide-y divide-gray-200"><tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">Ecology_Final_Notes.pdf</span></td><td class="px-4 py-3 text-sm text-gray-600">PDF Document</td><td class="px-4 py-3 text-sm text-gray-600"> 2.5 MB <span class="text-xs text-gray-500">(from 4.1 MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr><tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="image" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">Food_Web_Diagram.png</span></td><td class="px-4 py-3 text-sm text-gray-600">Image</td><td class="px-4 py-3 text-sm text-gray-600"> 0.8 MB <span class="text-xs text-gray-500">(from 1.5 MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr></tbody></table></div></div>
                         </div>
-                    </div> <!-- End of #course-grid -->
-
-                    <!-- This div will hold the details for a single course (hidden by default) -->
+                    </div>
                     <div id="course-details-view" class="hidden space-y-6">
-                        <!-- Back Button -->
-                        <button id="back-to-courses-btn" class="flex items-center text-sm font-medium text-gray-600 transition hover:text-primary">
-                            <i data-lucide="arrow-left" class="mr-2 h-4 w-4"></i>
-                            Back to Study Materials
-                        </button>
-                        
-                        <!-- Course Header -->
-                        <div class="rounded-xl bg-white p-6 shadow-lg">
-                            <h2 id="course-detail-title" class="text-3xl font-bold text-gray-800"></h2>
-                            <p id="course-detail-desc" class="mt-2 text-gray-600"></p>
-                            <div class="mt-4">
-                                <span class="text-xs font-semibold text-gray-500">Progress</span>
-                                <div class="mt-1 w-full rounded-full bg-gray-200">
-                                    <div id="course-detail-progress" class="rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Course Content Layout -->
+                        <button id="back-to-courses-btn" class="flex items-center text-sm font-medium text-gray-600 transition hover:text-primary"><i data-lucide="arrow-left" class="mr-2 h-4 w-4"></i> Back to Study Materials</button>
+                        <div class="rounded-xl bg-white p-6 shadow-lg"><h2 id="course-detail-title" class="text-3xl font-bold text-gray-800"></h2><p id="course-detail-desc" class="mt-2 text-gray-600"></p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div id="course-detail-progress" class="rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500"></div></div></div></div>
                         <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
-                            <!-- Module/Lesson List -->
-                            <div class="rounded-xl bg-white shadow-lg lg:col-span-1">
-                                <h3 class="border-b p-4 text-lg font-semibold text-gray-700">Course Modules</h3>
-                                <ul id="course-module-list" class="divide-y divide-gray-200 p-2">
-                                    <!-- Modules will be populated by JS -->
-                                </ul>
-                            </div>
-                            
-                            <!-- Main Content (Video/Text) -->
-                            <div class="rounded-xl bg-white shadow-lg lg:col-span-3">
-                                <h3 id="course-content-title" class="border-b p-6 text-xl font-semibold text-gray-700"></h3>
-                                <div class="p-6 space-y-4">
-                                    <!-- Mock Video Player -->
-                                    <div class="aspect-video w-full rounded-lg bg-gray-900 flex items-center justify-center text-white">
-                                        <i data-lucide="play" class="h-16 w-16 text-white/70"></i>
-                                    </div>
-                                    
-                                    <!-- Lesson Text -->
-                                    <h4 class="text-lg font-semibold text-gray-800">About this lesson</h4>
-                                    <p id="course-content-text" class="text-gray-600 leading-relaxed"></p>
-                                </div>
-                            </div>
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-1"><h3 class="border-b p-4 text-lg font-semibold text-gray-700">Course Modules (+50 GP each)</h3><ul id="course-module-list" class="divide-y divide-gray-200 p-2"></ul></div>
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-3"><h3 id="course-content-title" class="border-b p-6 text-xl font-semibold text-gray-700"></h3><div class="p-6 space-y-4"><div class="aspect-video w-full rounded-lg bg-gray-900 flex items-center justify-center text-white"><i data-lucide="play" class="h-16 w-16 text-white/70"></i></div><h4 class="text-lg font-semibold text-gray-800">About this lesson</h4><p id="course-content-text" class="text-gray-600 leading-relaxed"></p></div></div>
                         </div>
-                    </div> <!-- End of #course-details-view -->
-
+                    </div>
                 </div>
 
-                <!-- 
-                  ========================================
-                  ECOBOT PAGE
-                  ========================================
-                -->
+                <!-- CARBON CALCULATOR PAGE -->
+                <div id="page-calculator" class="page-content hidden space-y-6">
+                    <div class="rounded-xl bg-white p-6 text-center shadow-lg"><i data-lucide="footprints" class="mx-auto h-16 w-16 text-primary"></i><h2 class="mt-4 text-3xl font-bold text-gray-800">Carbon Footprint Calculator</h2><p class="mt-2 text-gray-600">Get a simple estimate of your environmental impact.</p><p class="mt-1 text-xs text-gray-500">(Simplified calculation for educational purposes.)</p></div>
+                    <form id="carbon-calculator-form" class="rounded-xl bg-white p-8 shadow-lg space-y-6">
+                        <div><label for="commute" class="block text-lg font-semibold text-gray-700 mb-2">1. Primary Commute?</label><select id="commute" name="commute" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50"><option value="walk_bike">Walk / Bike</option><option value="public_transport">Public Transport</option><option value="electric_vehicle">Electric Vehicle</option><option value="gas_car_small">Gas Car (Small)</option><option value="gas_car_large" selected>Gas Car (Large/SUV)</option></select></div>
+                        <div><label for="diet" class="block text-lg font-semibold text-gray-700 mb-2">2. Diet Description?</label><select id="diet" name="diet" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50"><option value="vegan">Vegan</option><option value="vegetarian">Vegetarian</option><option value="pescatarian">Pescatarian</option><option value="low_meat" selected>Low Meat</option><option value="high_meat">High Meat</option></select></div>
+                        <div><label for="energy" class="block text-lg font-semibold text-gray-700 mb-2">3. Home Energy Usage?</label><select id="energy" name="energy" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50"><option value="very_conscious">Very Conscious</option><option value="somewhat_conscious" selected>Somewhat Conscious</option><option value="not_conscious">Not Very Conscious</option></select></div>
+                        <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-primary p-3 text-lg font-semibold text-white shadow-lg transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-75"><i data-lucide="calculator" class="mr-2 h-5 w-5"></i> Calculate</button>
+                    </form>
+                    <div id="calculator-result" class="hidden rounded-xl bg-secondary p-6 text-center shadow-inner opacity-0"><h3 class="text-xl font-semibold text-primary">Estimated Footprint:</h3><p id="footprint-value" class="my-3 text-4xl font-bold text-primary-dark"></p><p id="footprint-comparison" class="text-gray-700"></p><p class="mt-4 text-sm text-gray-600">Want to improve? Try an <a href="#" class="nav-item font-medium text-primary-light hover:underline" data-page="dashboard">Eco Challenge</a>!</p></div>
+                </div>
+
+                <!-- ECOBOT PAGE -->
                 <div id="page-ecobot" class="page-content hidden">
                     <div class="flex h-[calc(100vh-10rem)] flex-col rounded-xl bg-white shadow-lg">
-                        <!-- Chat Header -->
-                        <div class="flex items-center space-x-3 border-b p-4">
-                            <div class="relative flex h-12 w-12 items-center justify-center rounded-full bg-primary-light">
-                                <i data-lucide="bot" class="h-6 w-6 text-white"></i>
-                                <span class="absolute -bottom-1 -right-1 rounded-full border-2 border-white bg-green-500 p-1.5"></span>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">EcoBot</h3>
-                                <p class="text-sm text-green-600">Online</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Chat Window -->
-                        <div id="chat-window" class="flex-1 space-y-4 overflow-y-auto p-6">
-                            <!-- Initial Bot Message -->
-                            <div class="flex">
-                                <div class="chat-bubble chat-bubble-bot">
-                                    Hello! I'm EcoBot, powered by Gemini. I can help you with questions about ecology, your courses, or sustainability. Ask me anything!
-                                </div>
-                            </div>
-                            <!-- Bot Typing Indicator (template) -->
-                            <div id="bot-typing" class="flex hidden">
-                                <div class="chat-bubble chat-bubble-bot">
-                                    <div class="typing-indicator">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Chat Input Form -->
-                        <form id="chat-form" class="flex items-center space-x-2 border-t bg-gray-50 p-4">
-                            <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 rounded-full border-gray-300 p-3 px-5 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" autocomplete="off">
-                            <button type="submit" class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white transition duration-300 hover:bg-primary-dark">
-                                <i data-lucide="send" class="h-6 w-6"></i>
-                            </button>
-                        </form>
+                        <div class="flex items-center space-x-3 border-b p-4"><div class="relative flex h-12 w-12 items-center justify-center rounded-full bg-primary-light"><i data-lucide="bot" class="h-6 w-6 text-white"></i><span class="absolute -bottom-1 -right-1 rounded-full border-2 border-white bg-green-500 p-1.5"></span></div><div><h3 class="text-lg font-semibold text-gray-800">EcoBot</h3><p class="text-sm text-green-600">Online</p></div></div>
+                        <div id="chat-window" class="flex-1 space-y-4 overflow-y-auto p-6"><div class="flex"><div class="chat-bubble chat-bubble-bot">Hello! I'm EcoBot. Ask me about ecology, sustainability, or your courses!</div></div><div id="bot-typing" class="flex hidden"><div class="chat-bubble chat-bubble-bot"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div></div>
+                        <form id="chat-form" class="flex items-center space-x-2 border-t bg-gray-50 p-4"><input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 rounded-full border-gray-300 p-3 px-5 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" autocomplete="off"><button type="submit" class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white transition hover:bg-primary-dark"><i data-lucide="send" class="h-6 w-6"></i></button></form>
                     </div>
                 </div>
 
-                <!-- 
-                  ========================================
-                  LEADERBOARD PAGE
-                  ========================================
-                -->
+                <!-- LEADERBOARD PAGE -->
                 <div id="page-leaderboard" class="page-content hidden space-y-6">
-                    <div class="rounded-xl bg-white p-6 text-center shadow-lg">
-                        <i data-lucide="award" class="mx-auto h-16 w-16 text-accent"></i>
-                        <h2 class="mt-4 text-3xl font-bold text-gray-800">Top Students</h2>
-                        <p class="mt-2 text-gray-600">See who's leading the way in sustainability!</p>
-                    </div>
-                    
-                    <!-- Leaderboard Table -->
-                    <div class="overflow-hidden rounded-xl bg-white shadow-lg">
-                        <table class="w-full text-left">
-                            <thead class="border-b bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-sm font-semibold text-gray-600">Rank</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-gray-600">Student</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-gray-600">Green Points</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <!-- Mock Data -->
-                                <tr class="font-semibold hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-lg">
-                                        <i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-500"></i>1
-                                    </td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/F6E05E/000000?text=A" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-gray-800">Alex Johnson</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-lg text-gray-800">3,450 GP</td>
-                                </tr>
-                                <tr class="font-semibold hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-lg">
-                                        <i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-gray-400"></i>2
-                                    </td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/C0C0C0/FFFFFF?text=M" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-gray-800">Maria Garcia</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-lg text-gray-800">3,120 GP</td>
-                                </tr>
-                                <tr class="font-semibold hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-lg">
-                                        <i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-700"></i>3
-                                    </td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/CD7F32/FFFFFF?text=C" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-gray-800">Chen Wei</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-lg text-gray-800">2,980 GP</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-gray-700">4</td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/4A90E2/FFFFFF?text=R" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-gray-700">Ravi Patel</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-700">2,500 GP</td>
-                                </tr>
-                                <!-- Current User Highlight -->
-                                <tr class="bg-secondary font-bold ring-2 ring-primary-light hover:bg-green-100">
-                                    <td class="px-6 py-4 text-primary">5</td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-primary">Student (You)</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-primary">1,250 GP</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-gray-700">6</td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/E37B40/FFFFFF?text=E" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-gray-700">Emily Davis</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-700">980 GP</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-gray-700">7</td>
-                                    <td class="flex items-center px-6 py-4">
-                                        <img src="https://placehold.co/40x40/8E44AD/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full">
-                                        <span class="ml-3 text-gray-700">Sam Okoye</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-700">760 GP</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                     <div class="rounded-xl bg-white p-6 text-center shadow-lg"><i data-lucide="award" class="mx-auto h-16 w-16 text-accent"></i><h2 class="mt-4 text-3xl font-bold text-gray-800">Top Students</h2><p class="mt-2 text-gray-600">See who's leading the way!</p></div>
+                     <div class="overflow-hidden rounded-xl bg-white shadow-lg"><table class="w-full text-left"><thead class="border-b bg-gray-50"><tr><th class="px-6 py-3 text-sm font-semibold text-gray-600">Rank</th><th class="px-6 py-3 text-sm font-semibold text-gray-600">Student</th><th class="px-6 py-3 text-sm font-semibold text-gray-600">Green Points</th></tr></thead><tbody class="divide-y divide-gray-200"><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-500"></i>1</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/F6E05E/000000?text=A" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Alex Johnson</span></td><td class="px-6 py-4 text-lg text-gray-800">3,450 GP</td></tr><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-gray-400"></i>2</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/C0C0C0/FFFFFF?text=M" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Maria Garcia</span></td><td class="px-6 py-4 text-lg text-gray-800">3,120 GP</td></tr><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-700"></i>3</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/CD7F32/FFFFFF?text=C" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Chen Wei</span></td><td class="px-6 py-4 text-lg text-gray-800">2,980 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">4</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/4A90E2/FFFFFF?text=R" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Ravi Patel</span></td><td class="px-6 py-4 text-gray-700">2,500 GP</td></tr><tr id="leaderboard-user-row" class="bg-secondary font-bold ring-2 ring-primary-light hover:bg-green-100"><td class="px-6 py-4 text-primary">5</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-primary">Student (You)</span></td><td id="leaderboard-user-gp" class="px-6 py-4 text-primary">1250 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">6</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/E37B40/FFFFFF?text=E" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Emily Davis</span></td><td class="px-6 py-4 text-gray-700">980 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">7</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/8E44AD/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Sam Okoye</span></td><td class="px-6 py-4 text-gray-700">760 GP</td></tr></tbody></table></div>
                 </div>
 
-                <!-- 
-                  ========================================
-                  PROFILE PAGE
-                  ========================================
-                -->
+                <!-- PROFILE PAGE -->
                 <div id="page-profile" class="page-content hidden space-y-6">
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        <!-- Profile Card -->
                         <div class="rounded-xl bg-white p-6 text-center shadow-lg lg:col-span-1">
                             <img src="https://placehold.co/128x128/38A169/FFFFFF?text=S" alt="User Avatar" class="mx-auto h-32 w-32 rounded-full border-4 border-primary-light">
-                            
-                            <!-- View Name -->
                             <h2 id="profile-name-view" class="mt-4 text-2xl font-bold text-gray-800">Student</h2>
-                            <!-- Edit Name -->
                             <input id="profile-name-edit" type="text" class="hidden mt-4 w-full rounded-lg border-gray-300 p-2 text-center text-2xl font-bold text-gray-800 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="Student">
-                            
-                            <!-- View Email -->
                             <p id="profile-email-view" class="text-gray-500">student@ecostudy.com</p>
-                            <!-- Edit Email -->
                             <input id="profile-email-edit" type="email" class="hidden w-full rounded-lg border-gray-300 p-2 text-center text-gray-500 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="student@ecostudy.com">
-                            
-                            <!-- View Title -->
                             <p id="profile-title-view" class="mt-2 text-sm text-primary-light">Ecology Enthusiast</p>
-                            <!-- Edit Title -->
                             <input id="profile-title-edit" type="text" class="hidden mt-2 w-full rounded-lg border-gray-300 p-2 text-center text-sm text-primary-light shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="Ecology Enthusiast">
-                            
-                            <button id="edit-profile-button" data-mode="view" class="mt-6 w-full rounded-lg bg-primary px-4 py-2 font-semibold text-white transition duration-300 hover:bg-primary-dark">
-                                <i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>
-                                <span>Edit Profile</span>
-                            </button>
+                            <button id="edit-profile-button" data-mode="view" class="mt-6 w-full rounded-lg bg-primary px-4 py-2 font-semibold text-white transition duration-300 hover:bg-primary-dark"><i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i><span>Edit Profile</span></button>
                         </div>
-                        
-                        <!-- Stats & Bio -->
                         <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-2">
                             <h3 class="mb-4 text-xl font-semibold text-gray-700">About Me</h3>
-                            
-                            <!-- View Bio -->
-                            <p id="profile-bio-view" class="text-gray-600">
-                                Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.
-                            </p>
-                            <!-- Edit Bio -->
-                            <textarea id="profile-bio-edit" class="hidden h-32 w-full rounded-lg border-gray-300 p-2 text-gray-600 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50">Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.</textarea>
-                            
+                            <p id="profile-bio-view" class="text-gray-600">Passionate about renewable energy...</p>
+                            <textarea id="profile-bio-edit" class="hidden h-32 w-full rounded-lg border-gray-300 p-2 text-gray-600 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50">Passionate about renewable energy...</textarea>
                             <div class="my-6 border-t border-gray-200"></div>
-                            
+                            <h3 class="mb-4 text-xl font-semibold text-gray-700">My Eco Badges</h3>
+                            <div id="badge-display" class="flex flex-wrap gap-4">
+                                <span class="badge badge-bronze" title="Eco Starter (1000+ GP)"><i data-lucide="sprout" class="h-6 w-6"></i></span>
+                                <span class="badge" title="Eco Aware (2500+ GP)"><i data-lucide="leaf" class="h-6 w-6"></i></span>
+                                <span class="badge" title="Eco Champion (5000+ GP)"><i data-lucide="award" class="h-6 w-6"></i></span>
+                                <span class="badge" title="Eco Hero (10000+ GP)"><i data-lucide="shield-check" class="h-6 w-6"></i></span>
+                            </div>
+                            <div class="my-6 border-t border-gray-200"></div>
                             <h3 class="mb-4 text-xl font-semibold text-gray-700">My EcoStudy Stats</h3>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                <div class="rounded-lg bg-secondary p-4 text-center">
-                                    <i data-lucide="leaf" class="mx-auto h-8 w-8 text-primary-light"></i>
-                                    <p class="mt-2 text-xl font-bold text-primary">1,250</p>
-                                    <p class="text-sm text-gray-600">Green Points</p>
-                                </div>
-                                <div class="rounded-lg bg-secondary p-4 text-center">
-                                    <i data-lucide="check-circle" class="mx-auto h-8 w-8 text-blue-500"></i>
-                                    <p class="mt-2 text-xl font-bold text-blue-600">5</p>
-                                    <p class="text-sm text-gray-600">Courses Done</p>
-                                </div>
-                                <div class="rounded-lg bg-secondary p-4 text-center">
-                                    <i data-lucide="file-up" class="mx-auto h-8 w-8 text-indigo-500"></i>
-                                    <p class="mt-2 text-xl font-bold text-indigo-600">12</p>
-                                    <p class="text-sm text-gray-600">Files Uploaded</p>
-                                </div>
+                                <div class="rounded-lg bg-secondary p-4 text-center"><i data-lucide="leaf" class="mx-auto h-8 w-8 text-primary-light"></i><p id="profile-gp" class="mt-2 text-xl font-bold text-primary">1250</p><p class="text-sm text-gray-600">Green Points</p></div>
+                                <div class="rounded-lg bg-secondary p-4 text-center"><i data-lucide="check-circle" class="mx-auto h-8 w-8 text-blue-500"></i><p class="mt-2 text-xl font-bold text-blue-600">5</p><p class="text-sm text-gray-600">Courses Done</p></div>
+                                <div class="rounded-lg bg-secondary p-4 text-center"><i data-lucide="file-up" class="mx-auto h-8 w-8 text-indigo-500"></i><p id="profile-files" class="mt-2 text-xl font-bold text-indigo-600">12</p><p class="text-sm text-gray-600">Files Uploaded</p></div>
                             </div>
                         </div>
                     </div>
@@ -742,12 +328,62 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Icon Initialization ---
-            // lucide.createIcons(); // This call is redundant and causes an error
-                                  // The script auto-initializes on load.
+        // --- Icon Rendering ---
+        /**
+         * Renders Lucide icons if the library is available.
+         */
+        function renderLucideIconsInternal() {
+            // Check if lucide and its core properties are available
+            if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') {
+                try {
+                    lucide.createIcons();
+                    // console.log("Lucide icons rendered."); // Optional: for debugging
+                } catch (error) {
+                     console.error("Error creating Lucide icons:", error);
+                }
+            } else {
+                 // Log error if called when not ready (should only happen if called too early)
+                 console.error("Attempted to render Lucide icons, but library is not ready.");
+            }
+        }
 
-            // --- Element Selectors ---
+        /**
+         * Checks periodically if Lucide is ready and then calls the rendering function.
+         */
+         let lucideCheckInterval = null;
+         let lucideCheckAttempts = 0;
+         const MAX_LUCIDE_CHECKS = 20; // Check for ~2 seconds (20 * 100ms)
+
+         function initializeIconsWhenReady() {
+            if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') {
+                console.log("Lucide ready on initial check. Rendering icons.");
+                renderLucideIconsInternal();
+                if (lucideCheckInterval) {
+                    clearInterval(lucideCheckInterval); // Clear interval if it was set
+                }
+            } else {
+                 console.log("Lucide not ready yet. Starting polling check...");
+                 if (lucideCheckInterval) clearInterval(lucideCheckInterval); // Clear previous interval if any
+                 lucideCheckAttempts = 0; // Reset attempts
+
+                 lucideCheckInterval = setInterval(() => {
+                    lucideCheckAttempts++;
+                    console.log(`Lucide check attempt: ${lucideCheckAttempts}`);
+                    if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') {
+                        console.log("Lucide ready after polling. Rendering icons.");
+                        clearInterval(lucideCheckInterval);
+                        renderLucideIconsInternal();
+                    } else if (lucideCheckAttempts >= MAX_LUCIDE_CHECKS) {
+                        clearInterval(lucideCheckInterval);
+                        console.error("Lucide library failed to initialize after multiple checks.");
+                    }
+                }, 100); // Check every 100ms
+            }
+         }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Element Selectors (remain the same) ---
             const loginPage = document.getElementById('login-page');
             const mainApp = document.getElementById('main-app');
             const loginForm = document.getElementById('login-form');
@@ -758,13 +394,11 @@
             const navItems = document.querySelectorAll('.nav-item');
             const pageContents = document.querySelectorAll('.page-content');
             const pageTitle = document.getElementById('page-title');
-            
-            // --- User Menu Elements ---
             const userMenuButton = document.getElementById('user-menu-button');
             const userMenuDropdown = document.getElementById('user-menu-dropdown');
             const switchAccountButton = document.getElementById('switch-account-button');
-            
-            // --- Page Content Elements ---
+            const dropdownUsername = document.getElementById('dropdown-username');
+            const dropdownEmail = document.getElementById('dropdown-email');
             const fileUpload = document.getElementById('file-upload');
             const dropzone = document.getElementById('dropzone');
             const fileList = document.getElementById('file-list');
@@ -772,8 +406,12 @@
             const chatInput = document.getElementById('chat-input');
             const chatWindow = document.getElementById('chat-window');
             const botTyping = document.getElementById('bot-typing');
-
-            // --- Study Materials Page Elements ---
+            const greenPointsDisplay = document.getElementById('green-points-display');
+            const dashboardGP = document.getElementById('dashboard-gp');
+            const profileGP = document.getElementById('profile-gp');
+            const dashboardFiles = document.getElementById('dashboard-files');
+            const profileFiles = document.getElementById('profile-files');
+            const leaderboardUserGP = document.getElementById('leaderboard-user-gp');
             const courseGrid = document.getElementById('course-grid');
             const courseDetailsView = document.getElementById('course-details-view');
             const courseLinks = document.querySelectorAll('.course-link');
@@ -784,13 +422,9 @@
             const courseModuleList = document.getElementById('course-module-list');
             const courseContentTitle = document.getElementById('course-content-title');
             const courseContentText = document.getElementById('course-content-text');
-
-            // --- Gemini API Elements ---
             const ecoTipLoader = document.getElementById('eco-tip-loader');
             const ecoTipText = document.getElementById('eco-tip-text');
             const ecoTipError = document.getElementById('eco-tip-error');
-
-            // --- Profile Page Elements ---
             const editProfileButton = document.getElementById('edit-profile-button');
             const profileNameView = document.getElementById('profile-name-view');
             const profileNameEdit = document.getElementById('profile-name-edit');
@@ -800,637 +434,189 @@
             const profileTitleEdit = document.getElementById('profile-title-edit');
             const profileBioView = document.getElementById('profile-bio-view');
             const profileBioEdit = document.getElementById('profile-bio-edit');
+            const badgeDisplay = document.getElementById('badge-display');
+            const carbonCalculatorForm = document.getElementById('carbon-calculator-form');
+            const calculatorResultDiv = document.getElementById('calculator-result');
+            const footprintValue = document.getElementById('footprint-value');
+            const footprintComparison = document.getElementById('footprint-comparison');
 
-            // --- State ---
+            // --- State (remains the same) ---
             let currentPage = 'dashboard';
+            let currentUser = { name: 'Student', email: 'student@ecostudy.com', title: 'Ecology Enthusiast', bio: "Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.", greenPoints: 1250, filesUploaded: 12, completedModules: new Set() };
 
-            // --- Mock Course Data ---
-            const courses = {
-                'ecology': {
-                    title: 'Introduction to Ecology',
-                    description: 'Learn the fundamental principles of ecology, ecosystems, and biodiversity.',
-                    progress: '75%',
-                    progressColor: 'bg-primary-light',
-                    modules: [
-                        { title: 'Module 1: What is Ecology?', status: 'completed', icon: 'check-circle' },
-                        { title: 'Module 2: Ecosystems', status: 'active', icon: 'play-circle' },
-                        { title: 'Module 3: Biodiversity', status: 'locked', icon: 'lock' },
-                        { title: 'Module 4: Final Quiz', status: 'locked', icon: 'lock' },
-                    ],
-                    content: {
-                        'Module 1: What is Ecology?': 'Ecology is the scientific study of the interactions between organisms and their environment. This module introduces the core concepts, from individual organisms to populations, communities, and entire ecosystems.',
-                        'Module 2: Ecosystems': 'An ecosystem includes all the living things (plants, animals, organisms) in a given area, interacting with each other, and also with their non-living environments (weather, earth, sun, soil, climate, atmosphere).',
-                        'Module 3: Biodiversity': 'Biodiversity is the variety of life on Earth, in all its forms, from genes and bacteria to entire ecosystems such as forests or coral reefs. (Content locked).',
-                        'Module 4: Final Quiz': 'Test your knowledge on the core principles of ecology. (Content locked).',
-                    }
-                },
-                'renewable': {
-                    title: 'Renewable Energy',
-                    description: 'Explore solar, wind, and geothermal energy sources and their impact.',
-                    progress: '40%',
-                    progressColor: 'bg-blue-500',
-                    modules: [
-                        { title: 'Module 1: Solar Power', status: 'completed', icon: 'check-circle' },
-                        { title: 'Module 2: Wind Energy', status: 'active', icon: 'play-circle' },
-                        { title: 'Module 3: Geothermal', status: 'locked', icon: 'lock' },
-                    ],
-                    content: {
-                        'Module 1: Solar Power': 'Solar power is the conversion of energy from sunlight into electricity, either directly using photovoltaics (PV), or indirectly using concentrated solar power.',
-                        'Module 2: Wind Energy': 'Wind energy or wind power is the use of wind to provide mechanical power through wind turbines to turn electric generators for electrical power.',
-                        'Module 3: Geothermal': 'Geothermal energy is thermal energy generated and stored in the Earth. (Content locked).',
-                    }
-                },
-                'agriculture': {
-                    title: 'Sustainable Agriculture',
-                    description: 'Discover methods for farming in harmony with nature.',
-                    progress: '10%',
-                    progressColor: 'bg-green-600',
-                    modules: [
-                        { title: 'Module 1: Introduction', status: 'active', icon: 'play-circle' },
-                        { title: 'Module 2: Soil Health', status: 'locked', icon: 'lock' },
-                        { title: 'Module 3: Water Mgt.', status: 'locked', icon: 'lock' },
-                    ],
-                    content: {
-                        'Module 1: Introduction': 'Sustainable agriculture is farming in sustainable ways meeting society\'s present food and textile needs, without compromising the ability for current or future generations to meet their needs.',
-                        'Module 2: Soil Health': 'Soil health is the continued capacity of soil to function as a vital living ecosystem that sustains plants, animals, and humans. (Content locked).',
-                        'Module 3: Water Mgt.': 'Sustainable water management in agriculture involves practices that conserve water, reduce pollution, and recharge groundwater. (Content locked).',
-                    }
-                }
+            // --- Mock Course Data (remains the same) ---
+             const courses = {
+                 'ecology': { title: 'Introduction to Ecology', description: 'Learn the fundamental principles...', progress: '75%', progressColor: 'bg-primary-light', modules: [ { id: 'eco1', title: 'Module 1: What is Ecology?', status: 'completed', icon: 'check-circle' }, { id: 'eco2', title: 'Module 2: Ecosystems', status: 'active', icon: 'play-circle' }, { id: 'eco3', title: 'Module 3: Biodiversity', status: 'locked', icon: 'lock' }, { id: 'eco4', title: 'Module 4: Final Quiz', status: 'locked', icon: 'lock' } ], content: { 'Module 1: What is Ecology?': 'Ecology is...', 'Module 2: Ecosystems': 'An ecosystem includes...', 'Module 3: Biodiversity': 'Biodiversity is... (Content locked).', 'Module 4: Final Quiz': 'Test your knowledge... (Content locked).' } },
+                 'renewable': { title: 'Renewable Energy', description: 'Explore solar, wind...', progress: '40%', progressColor: 'bg-blue-500', modules: [ { id: 'ren1', title: 'Module 1: Solar Power', status: 'completed', icon: 'check-circle' }, { id: 'ren2', title: 'Module 2: Wind Energy', status: 'active', icon: 'play-circle' }, { id: 'ren3', title: 'Module 3: Geothermal', status: 'locked', icon: 'lock' } ], content: { 'Module 1: Solar Power': 'Solar power is...', 'Module 2: Wind Energy': 'Wind energy...', 'Module 3: Geothermal': 'Geothermal energy is... (Content locked).' } },
+                 'agriculture': { title: 'Sustainable Agriculture', description: 'Discover methods for farming...', progress: '10%', progressColor: 'bg-green-600', modules: [ { id: 'agr1', title: 'Module 1: Introduction', status: 'active', icon: 'play-circle' }, { id: 'agr2', title: 'Module 2: Soil Health', status: 'locked', icon: 'lock' }, { id: 'agr3', title: 'Module 3: Water Mgt.', status: 'locked', icon: 'lock' } ], content: { 'Module 1: Introduction': 'Sustainable agriculture is...', 'Module 2: Soil Health': 'Soil health is... (Content locked).', 'Module 3: Water Mgt.': 'Sustainable water management... (Content locked).' } }
             };
 
+
             // --- Functions ---
-            
-            /**
-             * =================================================================
-             * ✨ GEMINI API HELPER FUNCTION
-             * =================================================================
-             * Calls the Gemini API with exponential backoff.
-             * @param {string} userQuery - The user's prompt.
-             * @param {string} systemPrompt - The system instruction for the model.
-             * @param {number} retries - Internal retry counter.
-             * @param {number} delay - Internal delay counter.
-             * @returns {Promise<string>} - The generated text response.
-             */
-            async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) {
-                const apiKey = ""; // Leave empty, will be handled by the environment
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-                const payload = {
-                    contents: [{ parts: [{ text: userQuery }] }],
-                    systemInstruction: {
-                        parts: [{ text: systemPrompt }]
-                    },
-                };
+            function updateGreenPointsDisplay() { const gpString = currentUser.greenPoints.toLocaleString(); if (greenPointsDisplay) greenPointsDisplay.textContent = gpString; if (dashboardGP) dashboardGP.textContent = gpString; if (profileGP) profileGP.textContent = gpString; if (leaderboardUserGP) leaderboardUserGP.textContent = `${gpString} GP`; updateBadges(); }
+            function updateFileCountDisplay() { const fileString = currentUser.filesUploaded.toLocaleString(); if (dashboardFiles) dashboardFiles.textContent = fileString; if (profileFiles) profileFiles.textContent = fileString; }
+            function awardGreenPoints(points) { currentUser.greenPoints += points; updateGreenPointsDisplay(); }
+            function updateBadges() { if (!badgeDisplay) return; const badges = badgeDisplay.querySelectorAll('.badge'); const gp = currentUser.greenPoints; let iconsNeedUpdate = false; badges.forEach(badge => { const title = badge.getAttribute('title') || ''; let threshold = 0; let targetIconClass = ''; let badgeClass = ''; const iconElement = badge.querySelector('i, svg'); const currentIcon = iconElement ? iconElement.getAttribute('data-lucide') : null; if (title.includes('Eco Starter')) { threshold = 1000; targetIconClass = 'sprout'; badgeClass = 'badge-bronze'; } else if (title.includes('Eco Aware')) { threshold = 2500; targetIconClass = 'leaf'; badgeClass = 'badge-silver'; } else if (title.includes('Eco Champion')) { threshold = 5000; targetIconClass = 'award'; badgeClass = 'badge-gold'; } else if (title.includes('Eco Hero')) { threshold = 10000; targetIconClass = 'shield-check'; badgeClass = 'badge-emerald'; } if (gp >= threshold) { badge.classList.remove('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.add(badgeClass); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } else { badge.classList.add('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.remove('badge-bronze', 'badge-silver', 'badge-gold', 'badge-emerald'); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } }); if (iconsNeedUpdate) { renderLucideIconsInternal(); } } // Use internal directly here
+             async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) {
+                 // *** API KEY ADDED HERE ***
+                 const apiKey = "AIzaSyAVwgQHycQ9VWoYpRbGx2AHXXhyKbZYKY0";
+                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                 const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, };
+                 try {
+                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                     if (!response.ok) {
+                         if (response.status === 429 && retries > 0) {
+                             await new Promise(resolve => setTimeout(resolve, delay));
+                             return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
+                         }
+                         // Log specific error for bad API key
+                         if (response.status === 400 || response.status === 403) {
+                              console.error(`API Key Error: ${response.statusText} (Status: ${response.status}). Please check if the API key is valid and has permissions.`);
+                         } else {
+                              console.error(`API Error: ${response.statusText} (Status: ${response.status})`);
+                         }
+                         throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`);
+                     }
+                     const result = await response.json();
+                     const candidate = result.candidates?.[0];
+                     if (candidate && candidate.content?.parts?.[0]?.text) {
+                         return candidate.content.parts[0].text;
+                     } else if (result.promptFeedback?.blockReason) {
+                         // Handle blocked content
+                         console.warn(`Gemini response blocked. Reason: ${result.promptFeedback.blockReason}`);
+                         return `My response was blocked due to safety settings. Reason: ${result.promptFeedback.blockReason}. Please try rephrasing your request.`;
+                     } else {
+                         console.error("Invalid response structure:", result);
+                         throw new Error("Invalid response structure from API.");
+                     }
+                 } catch (error) {
+                     if (retries > 0) {
+                         await new Promise(resolve => setTimeout(resolve, delay));
+                         return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
+                     }
+                     console.error("Gemini API call failed after retries:", error.message);
+                     // Provide a more user-friendly error in the chat
+                     throw new Error("Failed to get response from AI assistant after multiple attempts.");
+                 }
+             }
+            async function fetchEcoTip() { if (!ecoTipLoader || !ecoTipText || !ecoTipError) return; ecoTipLoader.classList.remove('hidden'); ecoTipText.classList.add('hidden'); ecoTipError.classList.add('hidden'); const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown."; const userQuery = "Give me today's eco-tip."; try { const tip = await callGeminiAPI(userQuery, systemPrompt); ecoTipText.textContent = tip; ecoTipText.classList.remove('hidden'); } catch (error) { ecoTipError.textContent = "Could not load tip. " + error.message; ecoTipError.classList.remove('hidden'); } finally { ecoTipLoader.classList.add('hidden'); } }
+            function toggleMobileMenu() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
+            function showPage(pageId) { pageContents.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(`page-${pageId}`); if (targetPage) targetPage.classList.remove('hidden'); navItems.forEach(item => { item.classList.remove('active'); if (item.dataset.page === pageId) item.classList.add('active'); }); let title = ''; const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`); if (sidebarLink && sidebarLink.querySelector('span')) { title = sidebarLink.querySelector('span').textContent; } else if (pageId === 'profile') { title = 'My Profile'; } else { title = pageId.charAt(0).toUpperCase() + pageId.slice(1); } pageTitle.textContent = title; currentPage = pageId; if (!sidebar.classList.contains('-translate-x-full')) toggleMobileMenu(); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); renderLucideIconsInternal(); } // Use internal directly
+            function showCourseGrid() { if (courseGrid && courseDetailsView) { courseDetailsView.classList.add('hidden'); courseGrid.classList.remove('hidden'); } if (pageTitle) pageTitle.textContent = 'Study Materials'; }
+            function showCourse(courseId) { const course = courses[courseId]; if (!course || !courseGrid || !courseDetailsView || !pageTitle || !courseModuleList) return; courseGrid.classList.add('hidden'); courseDetailsView.classList.remove('hidden'); pageTitle.textContent = course.title; courseDetailTitle.textContent = course.title; courseDetailDesc.textContent = course.description; courseDetailProgress.style.width = course.progress; courseDetailProgress.textContent = course.progress; courseDetailProgress.className = `rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500 ${course.progressColor}`; courseModuleList.innerHTML = ''; let activeModuleTitle = ''; course.modules.forEach(module => { let itemClass = 'text-gray-700 hover:bg-gray-50'; let iconColor = 'text-gray-500'; let isClickable = true; const isCompleted = currentUser.completedModules.has(module.id); let displayStatus = module.status; if (isCompleted) { displayStatus = 'completed'; } let currentIcon = module.icon; if (displayStatus === 'active') { itemClass = 'text-white bg-primary'; iconColor = 'text-white'; activeModuleTitle = module.title; currentIcon = 'play-circle'; } else if (displayStatus === 'completed') { itemClass = 'text-gray-500 hover:bg-gray-50'; iconColor = 'text-primary-light'; currentIcon = 'check-circle'; if (!activeModuleTitle) activeModuleTitle = module.title; } else if (displayStatus === 'locked') { itemClass = 'text-gray-400 cursor-not-allowed'; iconColor = 'text-gray-400'; isClickable = false; currentIcon = 'lock'; } const moduleHtml = `<li class="module-item flex items-center p-3 text-sm font-medium rounded-lg cursor-pointer ${itemClass}" data-module-id="${module.id}" data-module-title="${module.title}" data-status="${displayStatus}" ${!isClickable ? 'disabled' : ''}><i data-lucide="${currentIcon}" class="mr-3 h-5 w-5 ${iconColor}"></i><span>${module.title}</span></li>`; courseModuleList.innerHTML += moduleHtml; }); if (activeModuleTitle && course.content[activeModuleTitle]) { courseContentTitle.textContent = activeModuleTitle; courseContentText.textContent = course.content[activeModuleTitle]; } else if (course.modules.length > 0) { const firstModule = course.modules[0]; if(firstModule.status !== 'locked') { courseContentTitle.textContent = firstModule.title; courseContentText.textContent = course.content[firstModule.title]; const firstModuleElement = courseModuleList.querySelector(`[data-module-id="${firstModule.id}"]`); if (firstModuleElement) firstModuleElement.classList.add('text-white', 'bg-primary'); } else { courseContentTitle.textContent = 'Select a module'; courseContentText.textContent = 'Please select an unlocked module from the list.'; } } else { courseContentTitle.textContent = 'No modules found'; courseContentText.textContent = 'This course currently has no modules.'; } addModuleClickListeners(courseId); renderLucideIconsInternal(); } // Use internal directly
+            function addModuleClickListeners(courseId) { const course = courses[courseId]; if (!course) return; const moduleItems = courseModuleList.querySelectorAll('.module-item'); moduleItems.forEach(item => { item.addEventListener('click', (e) => { const clickedItem = e.currentTarget; const moduleId = clickedItem.dataset.moduleId; const moduleTitle = clickedItem.dataset.moduleTitle; const status = clickedItem.dataset.status; if (status === 'locked') return; if (course.content[moduleTitle]) { courseContentTitle.textContent = moduleTitle; courseContentText.textContent = course.content[moduleTitle]; } moduleItems.forEach(mi => mi.classList.remove('text-white', 'bg-primary')); clickedItem.classList.add('text-white', 'bg-primary'); if (!currentUser.completedModules.has(moduleId)) { currentUser.completedModules.add(moduleId); awardGreenPoints(50); const iconElement = clickedItem.querySelector('i, svg'); let iconChanged = false; if (iconElement) { if (iconElement.getAttribute('data-lucide') !== 'check-circle') { iconElement.setAttribute('data-lucide', 'check-circle'); iconChanged = true; } iconElement.classList.remove('text-white'); iconElement.classList.add('text-primary-light'); } clickedItem.dataset.status = 'completed'; if (iconChanged) { renderLucideIconsInternal(); } } }); }); } // Use internal directly
+            function handleFiles(files) { if (!files || !files.length || !fileList) return; let iconsNeedUpdate = false; Array.from(files).forEach(file => { const compressedSizeMB = (file.size / 1024 / 1024); const originalSizeMB = compressedSizeMB * (1.5 + Math.random()); const compressedSizeStr = compressedSizeMB.toFixed(2); const originalSizeStr = originalSizeMB.toFixed(1); let fileType = file.type; let icon = 'file'; if (fileType.includes('pdf')) { icon = 'file-text'; fileType = 'PDF Document'; } else if (fileType.includes('image')) { icon = 'image'; fileType = 'Image'; } else if (fileType.includes('document') || fileType.includes('word')) { icon = 'file-check-2'; fileType = 'Document'; } const newRowHtml = `<tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="${icon}" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">${file.name}</span></td><td class="px-4 py-3 text-sm text-gray-600">${fileType}</td><td class="px-4 py-3 text-sm text-gray-600">${compressedSizeStr} MB <span class="text-xs text-gray-500">(from ${originalSizeStr} MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr>`; fileList.insertAdjacentHTML('beforeend', newRowHtml); awardGreenPoints(10); currentUser.filesUploaded++; updateFileCountDisplay(); iconsNeedUpdate = true; }); attachDeleteListeners(); if (iconsNeedUpdate) { renderLucideIconsInternal(); } } // Use internal directly
+             function attachDeleteListeners() { const deleteButtons = fileList.querySelectorAll('.delete-file-btn'); deleteButtons.forEach(button => { button.removeEventListener('click', handleDeleteFile); button.addEventListener('click', handleDeleteFile); }); }
+             function handleDeleteFile(e) { const row = e.currentTarget.closest('tr'); if (row) { row.remove(); currentUser.filesUploaded--; updateFileCountDisplay();} } // Added counter update
+            function addChatMessage(text, sender) { const messageDiv = document.createElement('div'); messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : ''}`; const bubble = document.createElement('div'); bubble.className = `chat-bubble ${sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}`; bubble.textContent = text; messageDiv.appendChild(bubble); if (botTyping && botTyping.parentElement === chatWindow) { chatWindow.insertBefore(messageDiv, botTyping); } else { chatWindow.appendChild(messageDiv); } chatWindow.scrollTop = chatWindow.scrollHeight; }
+            function showBotTyping(show) { if (botTyping && chatWindow) { if (show) { chatWindow.appendChild(botTyping); botTyping.classList.remove('hidden'); } else { botTyping.classList.add('hidden'); } chatWindow.scrollTop = chatWindow.scrollHeight; } }
+             function calculateFootprint() { const commuteFactors = { walk_bike: 0.1, public_transport: 1.5, electric_vehicle: 1.0, gas_car_small: 3.5, gas_car_large: 5.0 }; const dietFactors = { vegan: 1.5, vegetarian: 2.0, pescatarian: 2.5, low_meat: 3.5, high_meat: 5.0 }; const energyFactors = { very_conscious: 1.0, somewhat_conscious: 2.0, not_conscious: 3.5 }; const commuteValue = document.getElementById('commute').value; const dietValue = document.getElementById('diet').value; const energyValue = document.getElementById('energy').value; const totalFootprint = (commuteFactors[commuteValue] * 0.4) + (dietFactors[dietValue] * 0.4) + (energyFactors[energyValue] * 0.2); const footprintTonnes = (totalFootprint * 1.5).toFixed(1); footprintValue.textContent = `${footprintTonnes} tonnes CO2e / year`; let comparisonText = ''; const avgFootprint = 16; if (footprintTonnes < avgFootprint / 2) { comparisonText = "That's significantly below the average!"; } else if (footprintTonnes < avgFootprint * 0.9) { comparisonText = "You're below the average. Well done!"; } else if (footprintTonnes < avgFootprint * 1.1) { comparisonText = "Your footprint is around the average."; } else { comparisonText = "Your footprint is above the average."; } footprintComparison.textContent = comparisonText; calculatorResultDiv.classList.remove('hidden'); setTimeout(() => { calculatorResultDiv.classList.remove('opacity-0'); }, 10); }
 
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 429 && retries > 0) { // Throttling
-                            // Don't log to console, just retry
-                            await new Promise(resolve => setTimeout(resolve, delay));
-                            return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
-                        }
-                        throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`);
-                    }
-
-                    const result = await response.json();
-                    const candidate = result.candidates?.[0];
-
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        return candidate.content.parts[0].text;
-                    } else {
-                        throw new Error("Invalid response structure from API.");
-                    }
-                } catch (error) {
-                    if (retries > 0) {
-                        // Don't log to console, just retry
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
-                    }
-                    console.error("Gemini API call failed:", error.message);
-                    throw error; // Re-throw after retries are exhausted
-                }
-            }
-            
-            /**
-             * =================================================================
-             * ✨ GEMINI API FEATURE: Fetch Eco-Tip of the Day
-             * =================================================================
-             */
-            async function fetchEcoTip() {
-                if (!ecoTipLoader || !ecoTipText || !ecoTipError) return;
-
-                ecoTipLoader.classList.remove('hidden');
-                ecoTipText.classList.add('hidden');
-                ecoTipError.classList.add('hidden');
-                
-                const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown.";
-                const userQuery = "Give me today's eco-tip.";
-
-                try {
-                    const tip = await callGeminiAPI(userQuery, systemPrompt);
-                    ecoTipText.textContent = tip;
-                    ecoTipText.classList.remove('hidden');
-                } catch (error) {
-                    ecoTipError.classList.remove('hidden');
-                } finally {
-                    ecoTipLoader.classList.add('hidden');
-                }
-            }
-
-
-            /**
-             * Toggles the mobile sidebar menu
-             */
-            function toggleMobileMenu() {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            }
-
-            /**
-             * Switches the visible page content
-             * @param {string} pageId - The ID of the page to show (e.g., 'dashboard')
-             */
-            function showPage(pageId) {
-                // Hide all pages
-                pageContents.forEach(page => {
-                    page.classList.add('hidden');
-                });
-                
-                // Show the target page
-                const targetPage = document.getElementById(`page-${pageId}`);
-                if (targetPage) {
-                    targetPage.classList.remove('hidden');
-                }
-                
-                // Update active nav item
-                navItems.forEach(item => {
-                    item.classList.remove('active');
-                    if (item.dataset.page === pageId) {
-                        item.classList.add('active');
-                    }
-                });
-                
-                // Update page title
-                let title = '';
-                // Try to find the title from the sidebar first, as it's the source of truth
-                const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`);
-                
-                if (sidebarLink && sidebarLink.querySelector('span')) {
-                    title = sidebarLink.querySelector('span').textContent;
-                } else if (pageId === 'profile') {
-                    // Handle "My Profile" page specifically
-                    title = 'My Profile';
-                } else {
-                    // Fallback for pages not in the sidebar (if any) or dashboard
-                    // If we're clicking a quick-access link, it's better to find the real sidebar link
-                    const mainSidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`);
-                    if (mainSidebarLink && mainSidebarLink.querySelector('span')) {
-                        title = mainSidebarLink.querySelector('span').textContent;
-                    } else {
-                         // Last resort, capitalize the pageId
-                        title = pageId.charAt(0).toUpperCase() + pageId.slice(1);
-                    }
-                }
-                
-                pageTitle.textContent = title;
-                
-                currentPage = pageId;
-                
-                // Close mobile menu if open
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    toggleMobileMenu();
-                }
-
-                // Close user menu if open
-                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
-                    userMenuDropdown.classList.add('hidden');
-                }
-
-                // Re-initialize icons if new ones were added (e.g., in file list)
-                // FIX: Add check for lucide object before calling
-                if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                    // Wrap in setTimeout to avoid race condition with lucide's async init
-                    setTimeout(() => lucide.createIcons(), 0);
-                }
-            }
-            
-            /**
-             * Shows the main course grid
-             */
-            function showCourseGrid() {
-                if (courseGrid && courseDetailsView) {
-                    courseDetailsView.classList.add('hidden');
-                    courseGrid.classList.remove('hidden');
-                }
-                // Set page title back
-                if (pageTitle) {
-                    pageTitle.textContent = 'Study Materials';
-                }
-            }
-
-            /**
-             * Shows the details for a specific course
-             * @param {string} courseId - The ID of the course (e.g., 'ecology')
-             */
-            function showCourse(courseId) {
-                const course = courses[courseId];
-                if (!course || !courseGrid || !courseDetailsView || !pageTitle) return;
-
-                // Hide grid, show details
-                courseGrid.classList.add('hidden');
-                courseDetailsView.classList.remove('hidden');
-
-                // Populate header
-                pageTitle.textContent = course.title; // Update main page title
-                courseDetailTitle.textContent = course.title;
-                courseDetailDesc.textContent = course.description;
-                courseDetailProgress.style.width = course.progress;
-                courseDetailProgress.textContent = course.progress;
-                // Clear old color classes
-                courseDetailProgress.classList.remove('bg-primary-light', 'bg-blue-500', 'bg-green-600');
-                // Add new color class
-                courseDetailProgress.classList.add(course.progressColor);
-
-                // Populate module list
-                courseModuleList.innerHTML = ''; // Clear old modules
-                let activeModuleTitle = '';
-                course.modules.forEach(module => {
-                    let itemClass = 'text-gray-700 hover:bg-gray-50';
-                    let iconColor = 'text-gray-500';
-                    if (module.status === 'active') {
-                        itemClass = 'text-white bg-primary';
-                        iconColor = 'text-white';
-                        activeModuleTitle = module.title;
-                    } else if (module.status === 'completed') {
-                        itemClass = 'text-gray-500 hover:bg-gray-50';
-                        iconColor = 'text-primary-light';
-                    } else if (module.status === 'locked') {
-                        itemClass = 'text-gray-400 cursor-not-allowed';
-                        iconColor = 'text-gray-400';
-                    }
-
-                    const moduleHtml = `
-                        <li class="flex items-center p-3 text-sm font-medium rounded-lg cursor-pointer ${itemClass}" data-module="${module.title}">
-                            <i data-lucide="${module.icon}" class="mr-3 h-5 w-5 ${iconColor}"></i>
-                            <span>${module.title}</span>
-                        </li>
-                    `;
-                    courseModuleList.innerHTML += moduleHtml;
-                });
-
-                // Populate content for the active module
-                if (activeModuleTitle) {
-                    courseContentTitle.textContent = activeModuleTitle;
-                    courseContentText.textContent = course.content[activeModuleTitle];
-                } else {
-                    courseContentTitle.textContent = 'Select a module';
-                    courseContentText.textContent = 'Please select a module from the list to view its content.';
-                }
-                
-                // Re-create icons for the new elements
-                // FIX: Add check for lucide object before calling
-                if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                    // Wrap in setTimeout to avoid race condition
-                    setTimeout(() => lucide.createIcons(), 0);
-                }
-            }
-            
-            /**
-             * Handles file selection/upload
-             * @param {FileList} files - The list of files from the input
-             */
-            function handleFiles(files) {
-                if (!files || !files.length) return;
-                if (!fileList) return; // Add guard clause
-                
-                Array.from(files).forEach(file => {
-                    const fileSize = (file.size / 1024 / 1024).toFixed(2); // in MB
-                    let fileType = file.type;
-                    let icon = 'file';
-
-                    if (fileType.includes('pdf')) {
-                        icon = 'file-text'; fileType = 'PDF Document';
-                    } else if (fileType.includes('image')) {
-                        icon = 'image'; fileType = 'Image';
-                    } else if (fileType.includes('document') || fileType.includes('word')) {
-                        icon = 'file-check-2'; fileType = 'Document';
-                    }
-
-                    const row = `
-                        <tr class="hover:bg-gray-50">
-                            <td class="flex items-center px-4 py-3">
-                                <i data-lucide="${icon}" class="h-5 w-5 text-gray-500"></i>
-                                <span class="ml-3 font-medium text-gray-800">${file.name}</span>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-600">${fileType}</td>
-                            <td class="px-4 py-3 text-sm text-gray-600">${fileSize} MB</td>
-                            <td class="px-4 py-3">
-                                <button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary">
-                                    <i data-lucide="download" class="h-5 w-5"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    fileList.innerHTML += row;
-                });
-                
-                // Re-create icons for the new rows
-                // FIX: Add check for lucide object before calling
-                if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                    // Wrap in setTimeout to avoid race condition
-                    setTimeout(() => lucide.createIcons(), 0);
-                }
-            }
-            
-            /**
-             * Adds a message to the chat window
-             * @param {string} text - The message content
-             * @param {'user' | 'bot'} sender - The sender of the message
-             */
-            function addChatMessage(text, sender) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : ''}`;
-                
-                const bubble = document.createElement('div');
-                bubble.className = `chat-bubble ${sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}`;
-                bubble.textContent = text;
-                
-                messageDiv.appendChild(bubble);
-                chatWindow.appendChild(messageDiv);
-                
-                // Scroll to bottom
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }
-            
-            /**
-             * Gets a mock response from the EcoBot
-             * @param {string} userInput - The user's input text
-             */
-            /*
-            function getBotResponse(userInput) {
-                const lowerInput = userInput.toLowerCase();
-                if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-                    return 'Hello there! How can I help you today?';
-                }
-                if (lowerInput.includes('green points')) {
-                    return 'You can earn Green Points by completing courses, participating in quizzes, and uploading helpful study materials!';
-                }
-                if (lowerInput.includes('photosynthesis')) {
-                    return 'Photosynthesis is the process used by plants, algae, and some bacteria to convert light energy into chemical energy, through a process that converts carbon dioxide and water into sugars and oxygen.';
-                }
-                if (lowerInput.includes('offline')) {
-                    return 'You can enable offline mode from your dashboard. This will download your current course materials for access without an internet connection.';
-                }
-                return "That's an interesting question. I'm still learning, but I can search my database for information on that topic.";
-            }
-            */
 
             // --- Event Listeners ---
-            
+
             // Login
             loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                // In a real app, you'd validate credentials here
-                loginPage.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                mainApp.classList.add('flex'); // Make sure flex is re-added
-                showPage('dashboard'); // Show default page
-                
-                // ✨ Fetch the Eco-Tip of the Day on login
-                fetchEcoTip();
+                e.preventDefault(); loginPage.classList.add('hidden'); mainApp.classList.remove('hidden'); mainApp.classList.add('flex');
+                showPage('dashboard'); fetchEcoTip(); updateGreenPointsDisplay(); updateFileCountDisplay(); updateBadges();
+                // Initial icon render is now handled by initializeIconsWhenReady called from window.onload
             });
 
-            // Logout function
-            function doLogout() {
-                mainApp.classList.add('hidden');
-                mainApp.classList.remove('flex');
-                loginPage.classList.remove('hidden');
-                // Close user menu if open
-                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
-                    userMenuDropdown.classList.add('hidden');
-                }
-            }
+            // Logout
+            function doLogout() { mainApp.classList.add('hidden'); mainApp.classList.remove('flex'); loginPage.classList.remove('hidden'); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); }
+            if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
+            if (switchAccountButton) switchAccountButton.addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
 
-            if (logoutButton) {
-                logoutButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    doLogout();
-                });
-            }
-
-            if (switchAccountButton) {
-                switchAccountButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    doLogout();
-                });
-            }
-            
             // Mobile Menu
-            if (burgerBtn) {
-                burgerBtn.addEventListener('click', toggleMobileMenu);
-            }
-            if (overlay) {
-                overlay.addEventListener('click', toggleMobileMenu);
-            }
+            if (burgerBtn) burgerBtn.addEventListener('click', toggleMobileMenu);
+            if (overlay) overlay.addEventListener('click', toggleMobileMenu);
 
-            /**
-             * Shows or hides the bot typing indicator
-             * @param {boolean} show - Whether to show or hide the indicator
-             */
-            function showBotTyping(show) {
-                if (botTyping) {
-                    if (show) {
-                        botTyping.classList.remove('hidden');
-                    } else {
-                        botTyping.classList.add('hidden');
-                    }
-                }
-                // Scroll to bottom to show indicator
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }
-
-            // --- Event Listeners ---
-            
-            // Login
+            // User Menu
             if (userMenuButton) {
                 userMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent window click listener from firing
-                    userMenuDropdown.classList.toggle('hidden');
-                    // Re-run createIcons in case they were in the dropdown
-                    // FIX: Add check for lucide object before calling
-                    if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                        // Wrap in setTimeout to avoid race condition
-                        setTimeout(() => lucide.createIcons(), 0);
-                    }
+                    e.stopPropagation(); userMenuDropdown.classList.toggle('hidden');
+                    renderLucideIconsInternal(); // Render icons in dropdown if opened
                 });
             }
-            
-            // Close dropdown when clicking outside
-            window.addEventListener('click', (e) => {
-                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) {
-                    if (userMenuButton && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
-                        userMenuDropdown.classList.add('hidden');
-                    }
-                }
-            });
+            window.addEventListener('click', (e) => { if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) { if (userMenuButton && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) { userMenuDropdown.classList.add('hidden'); } } });
 
             // Navigation
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const pageId = item.dataset.page;
-                    if (pageId) {
-                        showPage(pageId);
-                    }
-                });
-            });
+            navItems.forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); const pageId = item.dataset.page; if (pageId) showPage(pageId); }); });
 
-            // --- Study Materials Page Events ---
+            // Study Materials Page Events
             if (dropzone) {
-                // Click to upload
                 dropzone.addEventListener('click', () => fileUpload.click());
-                
-                // Drag and drop
-                dropzone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    dropzone.classList.add('border-primary-light', 'bg-secondary');
-                });
-                dropzone.addEventListener('dragleave', (e) => {
-                    e.preventDefault();
-                    dropzone.classList.remove('border-primary-light', 'bg-secondary');
-                });
-                dropzone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    dropzone.classList.remove('border-primary-light', 'bg-secondary');
-                    handleFiles(e.dataTransfer.files);
-                });
-                
-                // File input change
-                fileUpload.addEventListener('change', (e) => {
-                    handleFiles(e.target.files);
-                });
+                dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-primary-light', 'bg-secondary'); });
+                dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); });
+                dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); handleFiles(e.dataTransfer.files); });
+                fileUpload.addEventListener('change', (e) => { handleFiles(e.target.files); });
             }
+            courseLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const courseId = e.currentTarget.dataset.course; if (courseId) showCourse(courseId); }); });
+            if (backToCoursesBtn) backToCoursesBtn.addEventListener('click', (e) => { e.preventDefault(); showCourseGrid(); });
 
-            // Course Navigation
-            courseLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const courseId = e.currentTarget.dataset.course;
-                    if (courseId) {
-                        showCourse(courseId);
-                    }
-                });
-            });
-
-            if (backToCoursesBtn) {
-                backToCoursesBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showCourseGrid();
-                });
-            }
-
-            // --- EcoBot Page Events ---
+            // EcoBot Page Events
             if (chatForm) {
                 chatForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const userInput = chatInput.value.trim();
+                    e.preventDefault(); const userInput = chatInput.value.trim();
                     if (userInput) {
-                        addChatMessage(userInput, 'user');
-                        chatInput.value = '';
-                        
-                        // Show typing indicator
-                        showBotTyping(true);
-
-                        // ✨ Define EcoBot persona and call Gemini API
+                        addChatMessage(userInput, 'user'); chatInput.value = ''; showBotTyping(true);
                         const systemPrompt = "You are EcoBot, a friendly and knowledgeable AI assistant for the EcoStudy platform. Your expertise is in ecology, sustainability, climate change, and environmental science. You are helpful to students. Keep your answers clear, concise, and informative. Use markdown for formatting if needed.";
-                        
                         try {
                             const botResponse = await callGeminiAPI(userInput, systemPrompt);
                             addChatMessage(botResponse, 'bot');
                         } catch (error) {
-                            addChatMessage("I'm sorry, I'm having trouble connecting right now. Please try again in a moment.", 'bot');
+                             addChatMessage(error.message || "Sorry, I encountered an error.", 'bot'); // Display the error message from the API call
                         } finally {
-                            // Hide typing indicator
                             showBotTyping(false);
                         }
                     }
                 });
             }
-            
-            // --- Profile Page Events ---
+
+
+            // Carbon Calculator Event
+            if (carbonCalculatorForm) { carbonCalculatorForm.addEventListener('submit', (e) => { e.preventDefault(); calculateFootprint(); }); }
+
+            // Profile Page Events
             if (editProfileButton) {
                 editProfileButton.addEventListener('click', () => {
-                    const mode = editProfileButton.dataset.mode;
-                    // FIX: Query for 'i' or 'svg' because lucide replaces the 'i' tag with 'svg'
-                    const buttonIcon = editProfileButton.querySelector('i, svg');
-                    const buttonText = editProfileButton.querySelector('span');
-                    
-                    // Elements to toggle
-                    const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView];
-                    const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit];
-
+                    const mode = editProfileButton.dataset.mode; const buttonIcon = editProfileButton.querySelector('i, svg'); const buttonText = editProfileButton.querySelector('span'); const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView]; const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit];
+                    let iconChanged = false;
                     if (mode === 'view') {
-                        // --- Switch to Edit Mode ---
-                        // Copy view data to edit inputs
-                        profileNameEdit.value = profileNameView.textContent.trim();
-                        profileEmailEdit.value = profileEmailView.textContent.trim();
-                        profileTitleEdit.value = profileTitleView.textContent.trim();
-                        profileBioEdit.value = profileBioView.textContent.trim();
-                        
-                        // Toggle visibility
-                        viewElements.forEach(el => el.classList.add('hidden'));
-                        editElements.forEach(el => el.classList.remove('hidden'));
-                        
-                        // Update button
-                        if (buttonIcon) buttonIcon.remove(); // Add null check
-                        editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>');
-                        buttonText.textContent = 'Save Changes';
-                        editProfileButton.dataset.mode = 'edit';
-                        editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
-                        editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400');
-                        // FIX: Add check for lucide object before calling
-                        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                            // Wrap in setTimeout to avoid race condition
-                            setTimeout(() => lucide.createIcons(), 0);
-                        }
-
+                        profileNameEdit.value = currentUser.name; profileEmailEdit.value = currentUser.email; profileTitleEdit.value = currentUser.title; profileBioEdit.value = currentUser.bio;
+                        viewElements.forEach(el => el.classList.add('hidden')); editElements.forEach(el => el.classList.remove('hidden'));
+                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Save Changes'; editProfileButton.dataset.mode = 'edit';
+                        editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400');
+                        iconChanged = true;
                     } else {
-                        // --- Switch to View Mode (Save) ---
-                        // In a real app, you'd save this data to a server here.
-                        
-                        // Copy edit data to view elements
-                        profileNameView.textContent = profileNameEdit.value.trim();
-                        profileEmailView.textContent = profileEmailEdit.value.trim();
-                        profileTitleView.textContent = profileTitleEdit.value.trim();
-                        profileBioView.textContent = profileBioEdit.value.trim();
-                        
-                        // Toggle visibility
-                        viewElements.forEach(el => el.classList.remove('hidden'));
-                        editElements.forEach(el => el.classList.add('hidden'));
-                        
-                        // Update button
-                        if (buttonIcon) buttonIcon.remove(); // Add null check
-                        editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>');
-                        buttonText.textContent = 'Edit Profile';
-                        editProfileButton.dataset.mode = 'view';
-                        editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark');
-                        editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400');
-                        // FIX: Add check for lucide object before calling
-                        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                            // Wrap in setTimeout to avoid race condition
-                            setTimeout(() => lucide.createIcons(), 0);
-                        }
+                        currentUser.name = profileNameEdit.value.trim(); currentUser.email = profileEmailEdit.value.trim(); currentUser.title = profileTitleEdit.value.trim(); currentUser.bio = profileBioEdit.value.trim();
+                        profileNameView.textContent = currentUser.name; profileEmailView.textContent = currentUser.email; profileTitleView.textContent = currentUser.title; profileBioView.textContent = currentUser.bio;
+                        if(dropdownUsername) dropdownUsername.textContent = currentUser.name; if(dropdownEmail) dropdownEmail.textContent = currentUser.email;
+                        viewElements.forEach(el => el.classList.remove('hidden')); editElements.forEach(el => el.classList.add('hidden'));
+                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Edit Profile'; editProfileButton.dataset.mode = 'view';
+                        editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400');
+                        iconChanged = true;
+                    }
+                    if (iconChanged) {
+                        renderLucideIconsInternal(); // Use internal directly
                     }
                 });
             }
+
+             // Initial setup on load
+             attachDeleteListeners();
+             // Initial icon rendering is handled by initializeIconsWhenReady called from window.onload
+
         });
+
+        // Use window.onload for the first, most critical icon rendering attempt
+        window.onload = () => {
+            console.log("Window loaded. Initializing Lucide icons when ready.");
+            initializeIconsWhenReady(); // Start the check/polling process
+        };
     </script>
+
 </body>
 </html>
 
