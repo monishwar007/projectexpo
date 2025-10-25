@@ -136,6 +136,13 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
+         /* Style for course search input */
+        #course-search {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-search'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 0.75rem center;
+            padding-left: 2.5rem; /* Adjust based on icon size and desired spacing */
+        }
     </style>
 </head>
 <body class="bg-gray-100 antialiased">
@@ -272,26 +279,52 @@
 
                 <!-- STUDY MATERIALS PAGE -->
                 <div id="page-materials" class="page-content hidden space-y-6">
-                     <!-- Content remains largely the same, ensure elements have IDs -->
-                     <div id="course-grid" class="space-y-6">
+                    <!-- Main Content Section -->
+                    <div id="materials-main-view" class="space-y-6">
                         <h2 class="text-2xl font-semibold text-gray-700">My Courses</h2>
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                             <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="sun-moon" class="h-12 w-12 text-primary-light"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Introduction to Ecology</h3><p class="mt-2 text-sm text-gray-600">Learn fundamental principles...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-primary-light p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 75%">75%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-primary-light hover:underline" data-course="ecology">Continue Learning &rarr;</a></div>
-                             <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="wind" class="h-12 w-12 text-blue-500"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Renewable Energy</h3><p class="mt-2 text-sm text-gray-600">Explore solar, wind, geothermal...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-blue-500 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 40%">40%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-blue-500 hover:underline" data-course="renewable">Start Course &rarr;</a></div>
-                             <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="sprout" class="h-12 w-12 text-green-600"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Sustainable Agriculture</h3><p class="mt-2 text-sm text-gray-600">Discover methods for farming...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-green-600 p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 10%">10%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-green-600 hover:underline" data-course="agriculture">Start Course &rarr;</a></div>
+
+                        <!-- Search Bar -->
+                        <div class="relative mb-2"> <!-- Added margin-bottom -->
+                             <input type="search" id="course-search" placeholder="Search all courses (e.g., 'climate', 'ocean')..." class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50">
                         </div>
+                        <p class="text-sm text-gray-500 -mt-4 mb-6">Showing featured courses. Use search to find more.</p> <!-- Added note below search -->
+
+
+                        <!-- Course Grid Container -->
+                        <div id="course-grid-container" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            <!-- Course cards will be dynamically inserted here -->
+                        </div>
+                        <p id="no-courses-message" class="hidden text-center text-gray-500 mt-4">No courses match your search.</p>
+
                         <div class="my-8 border-t border-gray-200"></div>
+
+                        <!-- File Uploads Section -->
                         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                             <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-1"><h3 class="mb-4 text-xl font-semibold text-gray-700">Upload New File (+10 GP)</h3><input type="file" id="file-upload" class="hidden" multiple><div id="dropzone" class="flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary-light hover:bg-secondary"><i data-lucide="upload-cloud" class="h-12 w-12 text-gray-400"></i><p class="mt-2 text-sm text-gray-600">Drag & drop files here</p><p class="text-xs text-gray-500">or click to browse</p></div></div>
                             <div class="rounded-xl bg-white shadow-lg lg:col-span-2"><h3 class="border-b p-6 text-xl font-semibold text-gray-700">My Uploaded Files</h3><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-gray-50"><tr><th class="px-4 py-3 text-sm font-semibold text-gray-600">Name</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Type</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Size</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Actions</th></tr></thead><tbody id="file-list" class="divide-y divide-gray-200"><tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">Ecology_Final_Notes.pdf</span></td><td class="px-4 py-3 text-sm text-gray-600">PDF Document</td><td class="px-4 py-3 text-sm text-gray-600"> 2.5 MB <span class="text-xs text-gray-500">(from 4.1 MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr><tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="image" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">Food_Web_Diagram.png</span></td><td class="px-4 py-3 text-sm text-gray-600">Image</td><td class="px-4 py-3 text-sm text-gray-600"> 0.8 MB <span class="text-xs text-gray-500">(from 1.5 MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr></tbody></table></div></div>
                         </div>
                     </div>
+
+                     <!-- Course Details View (Initially hidden) -->
                      <div id="course-details-view" class="hidden space-y-6">
                         <button id="back-to-courses-btn" class="flex items-center text-sm font-medium text-gray-600 transition hover:text-primary"><i data-lucide="arrow-left" class="mr-2 h-4 w-4"></i> Back to Study Materials</button>
                         <div class="rounded-xl bg-white p-6 shadow-lg"><h2 id="course-detail-title" class="text-3xl font-bold text-gray-800"></h2><p id="course-detail-desc" class="mt-2 text-gray-600"></p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div id="course-detail-progress" class="rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500"></div></div></div></div>
                         <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
                             <div class="rounded-xl bg-white shadow-lg lg:col-span-1"><h3 class="border-b p-4 text-lg font-semibold text-gray-700">Course Modules (+50 GP each)</h3><ul id="course-module-list" class="divide-y divide-gray-200 p-2"></ul></div>
-                            <div class="rounded-xl bg-white shadow-lg lg:col-span-3"><h3 id="course-content-title" class="border-b p-6 text-xl font-semibold text-gray-700"></h3><div class="p-6 space-y-4"><div class="aspect-video w-full rounded-lg bg-gray-900 flex items-center justify-center text-white"><i data-lucide="play" class="h-16 w-16 text-white/70"></i></div><h4 class="text-lg font-semibold text-gray-800">About this lesson</h4><p id="course-content-text" class="text-gray-600 leading-relaxed"></p></div></div>
+                            <!-- Updated Main Content Area -->
+                            <div class="rounded-xl bg-white shadow-lg lg:col-span-3">
+                                <h3 id="course-content-title" class="border-b p-6 text-xl font-semibold text-gray-700"></h3>
+                                <div class="p-6 space-y-4">
+                                    <!-- Video Placeholder -->
+                                    <div id="video-player-placeholder" class="aspect-video w-full rounded-lg bg-gray-900 flex flex-col items-center justify-center text-white mb-4"> <!-- Added margin-bottom -->
+                                        <i data-lucide="video" class="h-16 w-16 text-white/70"></i>
+                                        <p class="mt-2 text-sm">Video content for this module will appear here.</p>
+                                    </div>
+                                    <!-- Lesson Text -->
+                                    <h4 class="text-lg font-semibold text-gray-800">About this lesson</h4>
+                                    <p id="course-content-text" class="text-gray-600 leading-relaxed"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -404,9 +437,12 @@
             const leaderboardUserGP = document.getElementById('leaderboard-user-gp');
             const leaderboardUserAvatar = document.getElementById('leaderboard-user-avatar');
             const leaderboardUserName = document.getElementById('leaderboard-user-name');
-            const courseGrid = document.getElementById('course-grid');
+            const materialsMainView = document.getElementById('materials-main-view'); // Changed ID reference
+            const courseGridContainer = document.getElementById('course-grid-container'); // Container for dynamic cards
+            const courseSearchInput = document.getElementById('course-search');
+            const noCoursesMessage = document.getElementById('no-courses-message');
             const courseDetailsView = document.getElementById('course-details-view');
-            const courseLinks = document.querySelectorAll('.course-link');
+            // const courseLinks = document.querySelectorAll('.course-link'); // Remove this, links are dynamic now
             const backToCoursesBtn = document.getElementById('back-to-courses-btn');
             const courseDetailTitle = document.getElementById('course-detail-title');
             const courseDetailDesc = document.getElementById('course-detail-desc');
@@ -414,6 +450,7 @@
             const courseModuleList = document.getElementById('course-module-list');
             const courseContentTitle = document.getElementById('course-content-title');
             const courseContentText = document.getElementById('course-content-text');
+            const videoPlayerPlaceholder = document.getElementById('video-player-placeholder'); // Get video placeholder
             const ecoTipLoader = document.getElementById('eco-tip-loader');
             const ecoTipText = document.getElementById('eco-tip-text');
             const ecoTipError = document.getElementById('eco-tip-error');
@@ -440,15 +477,23 @@
                 joinedChallenges: new Set() // Track joined challenges
             };
 
-            // --- Mock Course Data ---
-             const courses = {
-                 'ecology': { title: 'Introduction to Ecology', description: 'Learn the fundamental principles...', progress: '75%', progressColor: 'bg-primary-light', modules: [ { id: 'eco1', title: 'Module 1: What is Ecology?', status: 'default', icon: 'book' }, { id: 'eco2', title: 'Module 2: Ecosystems', status: 'default', icon: 'book' }, { id: 'eco3', title: 'Module 3: Biodiversity', status: 'default', icon: 'book' }, { id: 'eco4', title: 'Module 4: Final Quiz', status: 'default', icon: 'book' } ], content: { 'Module 1: What is Ecology?': 'Ecology is...', 'Module 2: Ecosystems': 'An ecosystem includes...', 'Module 3: Biodiversity': 'Biodiversity is...', 'Module 4: Final Quiz': 'Test your knowledge...' } },
-                 'renewable': { title: 'Renewable Energy', description: 'Explore solar, wind...', progress: '40%', progressColor: 'bg-blue-500', modules: [ { id: 'ren1', title: 'Module 1: Solar Power', status: 'default', icon: 'book' }, { id: 'ren2', title: 'Module 2: Wind Energy', status: 'default', icon: 'book' }, { id: 'ren3', title: 'Module 3: Geothermal', status: 'default', icon: 'book' } ], content: { 'Module 1: Solar Power': 'Solar power is...', 'Module 2: Wind Energy': 'Wind energy...', 'Module 3: Geothermal': 'Geothermal energy is...' } },
-                 'agriculture': { title: 'Sustainable Agriculture', description: 'Discover methods for farming...', progress: '10%', progressColor: 'bg-green-600', modules: [ { id: 'agr1', title: 'Module 1: Introduction', status: 'default', icon: 'book' }, { id: 'agr2', title: 'Module 2: Soil Health', status: 'locked', icon: 'lock' }, { id: 'agr3', title: 'Module 3: Water Mgt.', status: 'locked', icon: 'lock' } ], content: { 'Module 1: Introduction': 'Sustainable agriculture is...', 'Module 2: Soil Health': 'Soil health is... (Content locked).', 'Module 3: Water Mgt.': 'Sustainable water management... (Content locked).' } }
+            // --- ALL Mock Course Data (Expanded with video flags) ---
+            const allCourses = {
+                 'ecology': { title: 'Introduction to Ecology', icon: 'sun-moon', color: 'primary-light', description: 'Learn the fundamental principles...', progress: '75%', modules: [ { id: 'eco1', title: 'Module 1: What is Ecology?', hasVideo: true, status: 'default', icon: 'book' }, { id: 'eco2', title: 'Module 2: Ecosystems', hasVideo: true, status: 'default', icon: 'book' }, { id: 'eco3', title: 'Module 3: Biodiversity', hasVideo: false, status: 'default', icon: 'book' }, { id: 'eco4', title: 'Module 4: Final Quiz', hasVideo: false, status: 'default', icon: 'book' } ], content: { 'Module 1: What is Ecology?': 'Ecology is...', 'Module 2: Ecosystems': 'An ecosystem includes...', 'Module 3: Biodiversity': 'Biodiversity is...', 'Module 4: Final Quiz': 'Test your knowledge...' } },
+                 'renewable': { title: 'Renewable Energy', icon: 'wind', color: 'blue-500', description: 'Explore solar, wind...', progress: '40%', modules: [ { id: 'ren1', title: 'Module 1: Solar Power', hasVideo: true, status: 'default', icon: 'book' }, { id: 'ren2', title: 'Module 2: Wind Energy', hasVideo: true, status: 'default', icon: 'book' }, { id: 'ren3', title: 'Module 3: Geothermal', hasVideo: false, status: 'default', icon: 'book' } ], content: { 'Module 1: Solar Power': 'Solar power is...', 'Module 2: Wind Energy': 'Wind energy...', 'Module 3: Geothermal': 'Geothermal energy is...' } },
+                 'agriculture': { title: 'Sustainable Agriculture', icon: 'sprout', color: 'green-600', description: 'Discover methods for farming...', progress: '10%', modules: [ { id: 'agr1', title: 'Module 1: Introduction', hasVideo: true, status: 'default', icon: 'book' }, { id: 'agr2', title: 'Module 2: Soil Health', hasVideo: false, status: 'locked', icon: 'lock' }, { id: 'agr3', title: 'Module 3: Water Mgt.', hasVideo: false, status: 'locked', icon: 'lock' } ], content: { 'Module 1: Introduction': 'Sustainable agriculture is...', 'Module 2: Soil Health': 'Soil health is... (Content locked).', 'Module 3: Water Mgt.': 'Sustainable water management... (Content locked).' } },
+                 'climate': { title: 'Climate Change Science', icon: 'thermometer-sun', color: 'red-500', description: 'Understand the causes and effects...', progress: '0%', modules: [ { id: 'cli1', title: 'Module 1: Greenhouse Effect', hasVideo: true, status: 'default', icon: 'book' } ], content: { 'Module 1: Greenhouse Effect': 'The greenhouse effect is...' } },
+                 'conservation': { title: 'Wildlife Conservation', icon: 'paw-print', color: 'yellow-600', description: 'Learn about protecting endangered species...', progress: '25%', modules: [ { id: 'con1', title: 'Module 1: Threats', hasVideo: true, status: 'default', icon: 'book' } ], content: { 'Module 1: Threats': 'Major threats include...' } },
+                 'waste': { title: 'Waste Management & Recycling', icon: 'recycle', color: 'purple-500', description: 'Explore reducing, reusing, and recycling...', progress: '5%', modules: [ { id: 'was1', title: 'Module 1: The 3 Rs', hasVideo: false, status: 'default', icon: 'book' } ], content: { 'Module 1: The 3 Rs': 'Reduce, Reuse, Recycle...' } },
+                 'ocean': { title: 'Oceanography & Marine Life', icon: 'anchor', color: 'cyan-600', description: 'Dive into the study of oceans...', progress: '15%', modules: [ { id: 'oce1', title: 'Module 1: Ocean Zones', hasVideo: true, status: 'default', icon: 'book' } ], content: { 'Module 1: Ocean Zones': 'Epipelagic, Mesopelagic...' } },
+                 'policy': { title: 'Environmental Policy', icon: 'landmark', color: 'gray-600', description: 'Examine laws and regulations...', progress: '0%', modules: [ { id: 'pol1', title: 'Module 1: Key Legislation', hasVideo: false, status: 'default', icon: 'book' } ], content: { 'Module 1: Key Legislation': 'Clean Air Act, Clean Water Act...' } },
+                 'urban': { title: 'Urban Ecology', icon: 'building', color: 'slate-500', description: 'Study ecosystems in cities...', progress: '0%', modules: [ { id: 'urb1', title: 'Module 1: Green Spaces', hasVideo: true, status: 'default', icon: 'book' } ], content: { 'Module 1: Green Spaces': 'Importance of parks...' } },
             };
+
 
             // --- Functions ---
 
+            // ... (keep updateUserDisplays, awardGreenPoints, updateBadges, callGeminiAPI, fetchEcoTip, toggleMobileMenu) ...
              function updateUserDisplays() {
                 const gpString = currentUser.greenPoints.toLocaleString();
                 const fileString = currentUser.filesUploaded.toLocaleString();
@@ -478,114 +523,215 @@
             function awardGreenPoints(points) { currentUser.greenPoints += points; updateUserDisplays(); } // Changed to call updateUserDisplays
 
             function updateBadges() {
-                // ... (badge logic remains the same, called by updateUserDisplays) ...
                 if (!badgeDisplay) return; const badges = badgeDisplay.querySelectorAll('.badge'); const gp = currentUser.greenPoints; let iconsNeedUpdate = false; badges.forEach(badge => { const title = badge.getAttribute('title') || ''; let threshold = 0; let targetIconClass = ''; let badgeClass = ''; const iconElement = badge.querySelector('i, svg'); const currentIcon = iconElement ? iconElement.getAttribute('data-lucide') : null; if (title.includes('Eco Starter')) { threshold = 1000; targetIconClass = 'sprout'; badgeClass = 'badge-bronze'; } else if (title.includes('Eco Aware')) { threshold = 2500; targetIconClass = 'leaf'; badgeClass = 'badge-silver'; } else if (title.includes('Eco Champion')) { threshold = 5000; targetIconClass = 'award'; badgeClass = 'badge-gold'; } else if (title.includes('Eco Hero')) { threshold = 10000; targetIconClass = 'shield-check'; badgeClass = 'badge-emerald'; } if (gp >= threshold) { badge.classList.remove('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.add(badgeClass); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } else { badge.classList.add('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.remove('badge-bronze', 'badge-silver', 'badge-gold', 'badge-emerald'); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } }); if (iconsNeedUpdate) { renderLucideIconsInternal(); }
             }
 
             async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) { const apiKey = "AIzaSyAVwgQHycQ9VWoYpRbGx2AHXXhyKbZYKY0"; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`; const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, }; try { const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { if (response.status === 429 && retries > 0) { await new Promise(resolve => setTimeout(resolve, delay)); return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2); } if (response.status === 400 || response.status === 403) { console.error(`API Key Error: ${response.statusText} (Status: ${response.status}). Check key.`); } else { console.error(`API Error: ${response.statusText} (Status: ${response.status})`); } throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`); } const result = await response.json(); const candidate = result.candidates?.[0]; if (candidate && candidate.content?.parts?.[0]?.text) { return candidate.content.parts[0].text; } else if (result.promptFeedback?.blockReason) { console.warn(`Gemini response blocked. Reason: ${result.promptFeedback.blockReason}`); return `My response was blocked due to safety settings. Reason: ${result.promptFeedback.blockReason}. Please try rephrasing your request.`; } else { console.error("Invalid response structure:", result); throw new Error("Invalid response structure from API."); } } catch (error) { if (retries > 0) { await new Promise(resolve => setTimeout(resolve, delay)); return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2); } console.error("Gemini API call failed after retries:", error.message); throw new Error("Failed to get response from AI assistant after multiple attempts."); } }
             async function fetchEcoTip() { if (!ecoTipLoader || !ecoTipText || !ecoTipError) return; ecoTipLoader.classList.remove('hidden'); ecoTipText.classList.add('hidden'); ecoTipError.classList.add('hidden'); const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown."; const userQuery = "Give me today's eco-tip."; try { const tip = await callGeminiAPI(userQuery, systemPrompt); ecoTipText.textContent = tip; ecoTipText.classList.remove('hidden'); } catch (error) { ecoTipError.textContent = "Could not load tip. " + error.message; ecoTipError.classList.remove('hidden'); } finally { ecoTipLoader.classList.add('hidden'); } }
             function toggleMobileMenu() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-            function showPage(pageId) { pageContents.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(`page-${pageId}`); if (targetPage) targetPage.classList.remove('hidden'); navItems.forEach(item => { item.classList.remove('active'); if (item.dataset.page === pageId) item.classList.add('active'); }); let title = ''; const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`); if (sidebarLink && sidebarLink.querySelector('span')) { title = sidebarLink.querySelector('span').textContent; } else if (pageId === 'profile') { title = 'My Profile'; } else { title = pageId.charAt(0).toUpperCase() + pageId.slice(1); } pageTitle.textContent = title; currentPage = pageId; if (!sidebar.classList.contains('-translate-x-full')) toggleMobileMenu(); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); renderLucideIconsInternal(); }
-            function showCourseGrid() { if (courseGrid && courseDetailsView) { courseDetailsView.classList.add('hidden'); courseGrid.classList.remove('hidden'); } if (pageTitle) pageTitle.textContent = 'Study Materials'; }
-             function showCourse(courseId) {
-                 const course = courses[courseId];
-                 if (!course || !courseGrid || !courseDetailsView || !pageTitle || !courseModuleList) return;
-                 courseGrid.classList.add('hidden'); courseDetailsView.classList.remove('hidden');
-                 pageTitle.textContent = course.title; courseDetailTitle.textContent = course.title; courseDetailDesc.textContent = course.description; courseDetailProgress.style.width = course.progress; courseDetailProgress.textContent = course.progress; courseDetailProgress.className = `rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500 ${course.progressColor}`;
-                 courseModuleList.innerHTML = ''; let activeModuleTitle = ''; let firstAvailableModule = null;
+
+
+            /**
+             * Dynamically creates and displays course cards in the grid.
+             * @param {Object} coursesToDisplay - An object where keys are course IDs and values are course data.
+             */
+            function displayCourses(coursesToDisplay) {
+                if (!courseGridContainer) return;
+                courseGridContainer.innerHTML = ''; // Clear existing cards
+                let courseCount = 0;
+
+                for (const courseId in coursesToDisplay) {
+                    const course = coursesToDisplay[courseId];
+                     // Use Tailwind classes for text color directly
+                    const textColorClass = `text-${course.color || 'primary-light'}`;
+                    const bgColorClass = `bg-${course.color || 'primary-light'}`; // For progress bar
+
+                    const courseCardHTML = `
+                        <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105">
+                            <i data-lucide="${course.icon || 'book-open'}" class="h-12 w-12 ${textColorClass}"></i>
+                            <h3 class="mt-4 text-xl font-bold text-gray-800">${course.title}</h3>
+                            <p class="mt-2 text-sm text-gray-600">${course.description}</p>
+                            <div class="mt-4">
+                                <span class="text-xs font-semibold text-gray-500">Progress</span>
+                                <div class="mt-1 w-full rounded-full bg-gray-200">
+                                    <div class="rounded-full ${bgColorClass} p-0.5 text-center text-xs font-medium leading-none text-white" style="width: ${course.progress || '0%'}">${course.progress || '0%'}</div>
+                                </div>
+                            </div>
+                            <a href="#" class="course-link mt-4 inline-block font-medium ${textColorClass} hover:underline" data-course="${courseId}">${parseInt(course.progress) > 0 ? 'Continue Learning' : 'Start Course'} &rarr;</a>
+                        </div>`;
+                    courseGridContainer.innerHTML += courseCardHTML;
+                    courseCount++;
+                }
+
+                 // Show or hide the "no courses" message
+                if (noCoursesMessage) {
+                    noCoursesMessage.classList.toggle('hidden', courseCount > 0);
+                }
+
+
+                // Re-attach listeners to the new course links
+                attachCourseLinkListeners();
+                renderLucideIconsInternal(); // Render icons for the new cards
+            }
+
+            /**
+             * Filters courses based on the search term and displays them.
+             * @param {string} searchTerm - The text entered in the search bar.
+             */
+            function filterCourses(searchTerm) {
+                const lowerSearchTerm = searchTerm.toLowerCase().trim();
+                const filtered = {};
+                let count = 0;
+
+                if (!lowerSearchTerm) {
+                    // If search is empty, show default (first 3)
+                    for (const courseId in allCourses) {
+                        if (count < 3) {
+                            filtered[courseId] = allCourses[courseId];
+                            count++;
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    // Filter based on search term
+                    for (const courseId in allCourses) {
+                        const course = allCourses[courseId];
+                        if (course.title.toLowerCase().includes(lowerSearchTerm) || course.description.toLowerCase().includes(lowerSearchTerm)) {
+                            filtered[courseId] = course;
+                        }
+                    }
+                }
+                displayCourses(filtered);
+            }
+
+            /**
+              * Attaches click listeners to dynamically generated course links.
+              */
+             function attachCourseLinkListeners() {
+                 const courseLinks = courseGridContainer.querySelectorAll('.course-link');
+                 courseLinks.forEach(link => {
+                     // Remove existing listener to prevent duplicates if re-attaching
+                     link.removeEventListener('click', handleCourseLinkClick);
+                     link.addEventListener('click', handleCourseLinkClick);
+                 });
+             }
+
+             /**
+              * Handles clicks on course links.
+              * @param {Event} e - The click event.
+              */
+             function handleCourseLinkClick(e) {
+                 e.preventDefault();
+                 const courseId = e.currentTarget.dataset.course;
+                 if (courseId) {
+                     showCourse(courseId);
+                 }
+             }
+
+            function showPage(pageId) {
+                pageContents.forEach(page => page.classList.add('hidden'));
+                const targetPage = document.getElementById(`page-${pageId}`);
+                if (targetPage) targetPage.classList.remove('hidden');
+                navItems.forEach(item => { item.classList.remove('active'); if (item.dataset.page === pageId) item.classList.add('active'); });
+                let title = ''; const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`); if (sidebarLink && sidebarLink.querySelector('span')) { title = sidebarLink.querySelector('span').textContent; } else if (pageId === 'profile') { title = 'My Profile'; } else { title = pageId.charAt(0).toUpperCase() + pageId.slice(1); } pageTitle.textContent = title; currentPage = pageId;
+
+                // Reset specific page states if needed
+                if (pageId === 'materials') {
+                    showMaterialsMainView(); // Ensure main view is shown
+                    if (courseSearchInput) courseSearchInput.value = ''; // Clear search on page load
+                    filterCourses(''); // Display default courses
+                } else {
+                    showMaterialsMainView(); // Hide course details if navigating away
+                }
+
+
+                if (!sidebar.classList.contains('-translate-x-full')) toggleMobileMenu();
+                if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden');
+                renderLucideIconsInternal();
+             }
+
+            // Renamed function to avoid conflict
+            function showMaterialsMainView() {
+                if (materialsMainView && courseDetailsView) {
+                    courseDetailsView.classList.add('hidden');
+                    materialsMainView.classList.remove('hidden');
+                }
+                 // Reset title when going back to the main materials view
+                if (pageTitle && currentPage === 'materials') {
+                    pageTitle.textContent = 'Study Materials';
+                }
+            }
+
+            // Modified showCourse to handle video placeholder visibility
+            function showCourse(courseId) {
+                 const course = allCourses[courseId]; // Use allCourses here
+                 if (!course || !materialsMainView || !courseDetailsView || !pageTitle || !courseModuleList) return;
+                 materialsMainView.classList.add('hidden'); // Hide main view
+                 courseDetailsView.classList.remove('hidden'); // Show details view
+                 pageTitle.textContent = course.title; courseDetailTitle.textContent = course.title; courseDetailDesc.textContent = course.description; courseDetailProgress.style.width = course.progress; courseDetailProgress.textContent = course.progress;
+                 const progressBgColorClass = `bg-${course.color || 'primary-light'}`;
+                 courseDetailProgress.className = `rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500 ${progressBgColorClass}`;
+
+                 courseModuleList.innerHTML = '';
+                 let firstAvailableModule = null;
                  course.modules.forEach(module => {
+                     // ... (module list generation logic remains the same) ...
                      let itemClass = 'text-gray-700 hover:bg-gray-50'; let iconColor = 'text-gray-500'; let isClickable = true;
                      const isCompleted = currentUser.completedModules.has(module.id);
-                     let displayStatus = module.status === 'locked' ? 'locked' : (isCompleted ? 'completed' : 'active'); // Determine status based on completion and lock status
+                     let displayStatus = module.status === 'locked' ? 'locked' : (isCompleted ? 'completed' : 'active');
                      let currentIcon = module.icon;
-
-                     if (displayStatus === 'active') {
-                         itemClass = 'text-gray-700 hover:bg-gray-50'; // Default active is just hoverable
-                         iconColor = 'text-gray-500';
-                         currentIcon = 'play-circle'; // Show play for active, uncompleted
-                         if (!firstAvailableModule) firstAvailableModule = module; // Track first playable
-                     } else if (displayStatus === 'completed') {
-                         itemClass = 'text-gray-500 hover:bg-gray-50';
-                         iconColor = 'text-primary-light';
-                         currentIcon = 'check-circle';
-                         if (!firstAvailableModule) firstAvailableModule = module; // Completed is also available
-                     } else if (displayStatus === 'locked') {
-                         itemClass = 'text-gray-400 cursor-not-allowed';
-                         iconColor = 'text-gray-400';
-                         isClickable = false;
-                         currentIcon = 'lock';
-                     }
-
-                     const moduleHtml = `<li class="module-item flex items-center p-3 text-sm font-medium rounded-lg ${isClickable ? 'cursor-pointer' : ''} ${itemClass}" data-module-id="${module.id}" data-module-title="${module.title}" data-status="${displayStatus}" ${!isClickable ? 'disabled' : ''}><i data-lucide="${currentIcon}" class="mr-3 h-5 w-5 ${iconColor}"></i><span>${module.title}</span></li>`;
+                     if (displayStatus === 'active') { itemClass = 'text-gray-700 hover:bg-gray-50'; iconColor = 'text-gray-500'; currentIcon = 'play-circle'; if (!firstAvailableModule) firstAvailableModule = module; } else if (displayStatus === 'completed') { itemClass = 'text-gray-500 hover:bg-gray-50'; iconColor = 'text-primary-light'; currentIcon = 'check-circle'; if (!firstAvailableModule) firstAvailableModule = module; } else if (displayStatus === 'locked') { itemClass = 'text-gray-400 cursor-not-allowed'; iconColor = 'text-gray-400'; isClickable = false; currentIcon = 'lock'; }
+                     // Include hasVideo in data attribute
+                     const moduleHtml = `<li class="module-item flex items-center p-3 text-sm font-medium rounded-lg ${isClickable ? 'cursor-pointer' : ''} ${itemClass}" data-module-id="${module.id}" data-module-title="${module.title}" data-status="${displayStatus}" data-has-video="${module.hasVideo}" ${!isClickable ? 'disabled' : ''}><i data-lucide="${currentIcon}" class="mr-3 h-5 w-5 ${iconColor}"></i><span>${module.title}</span></li>`;
                      courseModuleList.innerHTML += moduleHtml;
                  });
 
-                 // Highlight and show content for the first available module by default
+                 // Set initial content and video visibility
                  if (firstAvailableModule && course.content[firstAvailableModule.title]) {
-                     activeModuleTitle = firstAvailableModule.title;
-                     courseContentTitle.textContent = activeModuleTitle;
-                     courseContentText.textContent = course.content[activeModuleTitle];
-                     const firstModuleElement = courseModuleList.querySelector(`[data-module-id="${firstAvailableModule.id}"]`);
-                     if (firstModuleElement) {
-                         firstModuleElement.classList.add('text-white', 'bg-primary');
-                         const iconEl = firstModuleElement.querySelector('i, svg');
-                         if(iconEl) iconEl.classList.add('text-white'); // Make icon white too
-                     }
+                    courseContentTitle.textContent = firstAvailableModule.title;
+                    courseContentText.textContent = course.content[firstAvailableModule.title];
+                    // Show/hide video based on the first available module
+                    videoPlayerPlaceholder.classList.toggle('hidden', !firstAvailableModule.hasVideo);
+                    const firstModuleElement = courseModuleList.querySelector(`[data-module-id="${firstAvailableModule.id}"]`);
+                    if (firstModuleElement) { firstModuleElement.classList.add('text-white', 'bg-primary'); const iconEl = firstModuleElement.querySelector('i, svg'); if(iconEl) iconEl.classList.add('text-white'); }
                  } else {
                      courseContentTitle.textContent = 'Select a module';
                      courseContentText.textContent = 'Please select an unlocked module from the list.';
+                     videoPlayerPlaceholder.classList.add('hidden'); // Hide video if no module selected
                  }
 
                  addModuleClickListeners(courseId); renderLucideIconsInternal();
              }
 
+             // Update addModuleClickListeners to handle video visibility
              function addModuleClickListeners(courseId) {
-                 const course = courses[courseId]; if (!course || !courseModuleList) return;
+                 const course = allCourses[courseId]; if (!course || !courseModuleList) return; // Use allCourses
                  const moduleItems = courseModuleList.querySelectorAll('.module-item');
                  moduleItems.forEach(item => {
                      item.addEventListener('click', (e) => {
                          const clickedItem = e.currentTarget;
-                         if (clickedItem.hasAttribute('disabled')) return; // Check disabled attribute
-
+                         if (clickedItem.hasAttribute('disabled')) return;
                          const moduleId = clickedItem.dataset.moduleId;
                          const moduleTitle = clickedItem.dataset.moduleTitle;
                          const status = clickedItem.dataset.status;
+                         const hasVideo = clickedItem.dataset.hasVideo === 'true'; // Get video flag
 
+                         // Update text content
                          if (course.content[moduleTitle]) {
                              courseContentTitle.textContent = moduleTitle;
                              courseContentText.textContent = course.content[moduleTitle];
                          }
 
-                         // Update highlight
-                         moduleItems.forEach(mi => {
-                            mi.classList.remove('text-white', 'bg-primary');
-                            const iconEl = mi.querySelector('i, svg');
-                            if(iconEl) iconEl.classList.remove('text-white'); // Remove white from all icons
-                            // Reset completed icon color if not the selected one
-                            if (mi !== clickedItem && mi.dataset.status === 'completed') {
-                                if(iconEl) iconEl.classList.add('text-primary-light');
-                            }
-                         });
+                         // Show/hide video placeholder
+                         videoPlayerPlaceholder.classList.toggle('hidden', !hasVideo);
+
+                         // Update highlight and icon logic remains the same
+                         moduleItems.forEach(mi => { mi.classList.remove('text-white', 'bg-primary'); const iconEl = mi.querySelector('i, svg'); if(iconEl) iconEl.classList.remove('text-white'); if (mi !== clickedItem && mi.dataset.status === 'completed') { if(iconEl) iconEl.classList.add('text-primary-light'); } });
                          clickedItem.classList.add('text-white', 'bg-primary');
                          const clickedIconEl = clickedItem.querySelector('i, svg');
-                         if(clickedIconEl) clickedIconEl.classList.add('text-white'); // Add white to selected icon
-
-                         // Award points only once on first click/completion
-                         if (!currentUser.completedModules.has(moduleId) && status !== 'completed') {
-                            currentUser.completedModules.add(moduleId);
-                            awardGreenPoints(50);
-                            clickedItem.dataset.status = 'completed'; // Update status visually
-                            let iconChanged = false;
-                            if (clickedIconEl) {
-                                if (clickedIconEl.getAttribute('data-lucide') !== 'check-circle') {
-                                    clickedIconEl.setAttribute('data-lucide', 'check-circle');
-                                    iconChanged = true;
-                                }
-                                clickedIconEl.classList.add('text-white'); // Ensure it's white now
-                                clickedIconEl.classList.remove('text-primary-light'); // Just in case
-                            }
-                             if (iconChanged) { renderLucideIconsInternal(); }
-                         }
+                         if(clickedIconEl) clickedIconEl.classList.add('text-white');
+                         if (!currentUser.completedModules.has(moduleId) && status !== 'completed') { currentUser.completedModules.add(moduleId); awardGreenPoints(50); clickedItem.dataset.status = 'completed'; let iconChanged = false; if (clickedIconEl) { if (clickedIconEl.getAttribute('data-lucide') !== 'check-circle') { clickedIconEl.setAttribute('data-lucide', 'check-circle'); iconChanged = true; } clickedIconEl.classList.add('text-white'); clickedIconEl.classList.remove('text-primary-light'); } if (iconChanged) { renderLucideIconsInternal(); } }
                      });
                  });
              }
@@ -597,16 +743,11 @@
             function showBotTyping(show) { if (botTyping && chatWindow) { if (show) { chatWindow.appendChild(botTyping); botTyping.classList.remove('hidden'); } else { botTyping.classList.add('hidden'); } chatWindow.scrollTop = chatWindow.scrollHeight; } }
             function calculateFootprint() { const commuteFactors = { walk_bike: 0.1, public_transport: 1.5, electric_vehicle: 1.0, gas_car_small: 3.5, gas_car_large: 5.0 }; const dietFactors = { vegan: 1.5, vegetarian: 2.0, pescatarian: 2.5, low_meat: 3.5, high_meat: 5.0 }; const energyFactors = { very_conscious: 1.0, somewhat_conscious: 2.0, not_conscious: 3.5 }; const commuteValue = document.getElementById('commute').value; const dietValue = document.getElementById('diet').value; const energyValue = document.getElementById('energy').value; const totalFootprint = (commuteFactors[commuteValue] * 0.4) + (dietFactors[dietValue] * 0.4) + (energyFactors[energyValue] * 0.2); const footprintTonnes = (totalFootprint * 1.5).toFixed(1); footprintValue.textContent = `${footprintTonnes} tonnes CO2e / year`; let comparisonText = ''; const avgFootprint = 16; if (footprintTonnes < avgFootprint / 2) { comparisonText = "That's significantly below the average!"; } else if (footprintTonnes < avgFootprint * 0.9) { comparisonText = "You're below the average. Well done!"; } else if (footprintTonnes < avgFootprint * 1.1) { comparisonText = "Your footprint is around the average."; } else { comparisonText = "Your footprint is above the average."; } footprintComparison.textContent = comparisonText; calculatorResultDiv.classList.remove('hidden'); setTimeout(() => { calculatorResultDiv.classList.remove('opacity-0'); }, 10); }
 
-            // --- Event Listeners ---
-            loginForm.addEventListener('submit', (e) => { e.preventDefault(); loginPage.classList.add('hidden'); mainApp.classList.remove('hidden'); mainApp.classList.add('flex'); showPage('dashboard'); fetchEcoTip(); updateUserDisplays(); initializeIconsWhenReady(); }); // Ensure icons are ready after login
 
-            function doLogout() { mainApp.classList.add('hidden'); mainApp.classList.remove('flex'); loginPage.classList.remove('hidden'); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); currentUser = { name: 'Student', email: 'student@ecostudy.com', title: 'Ecology Enthusiast', bio: "Passionate...", greenPoints: 1250, filesUploaded: 12, completedModules: new Set(['eco1', 'ren1']), joinedChallenges: new Set() }; // Reset user on logout
-                 // Reset challenge buttons visually
-                 challengeButtons.forEach(btn => {
-                     btn.disabled = false;
-                     btn.textContent = 'Join Challenge';
-                 });
-             }
+            // --- Event Listeners ---
+            loginForm.addEventListener('submit', (e) => { e.preventDefault(); loginPage.classList.add('hidden'); mainApp.classList.remove('hidden'); mainApp.classList.add('flex'); showPage('dashboard'); fetchEcoTip(); updateUserDisplays(); initializeIconsWhenReady(); });
+
+            function doLogout() { mainApp.classList.add('hidden'); mainApp.classList.remove('flex'); loginPage.classList.remove('hidden'); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); currentUser = { name: 'Student', email: 'student@ecostudy.com', title: 'Ecology Enthusiast', bio: "Passionate...", greenPoints: 1250, filesUploaded: 12, completedModules: new Set(['eco1', 'ren1']), joinedChallenges: new Set() }; challengeButtons.forEach(btn => { btn.disabled = false; btn.textContent = 'Join Challenge'; }); }
             if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
             if (switchAccountButton) switchAccountButton.addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
 
@@ -618,72 +759,42 @@
 
             navItems.forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); const pageId = item.dataset.page; if (pageId) showPage(pageId); }); });
 
-            if (dropzone) { dropzone.addEventListener('click', () => fileUpload.click()); dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-primary-light', 'bg-secondary'); }); dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); }); dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); handleFiles(e.dataTransfer.files); }); fileUpload.addEventListener('change', (e) => { handleFiles(e.target.files); }); }
-            courseLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const courseId = e.currentTarget.dataset.course; if (courseId) showCourse(courseId); }); });
-            if (backToCoursesBtn) backToCoursesBtn.addEventListener('click', (e) => { e.preventDefault(); showCourseGrid(); });
-
-            if (chatForm) { chatForm.addEventListener('submit', async (e) => { e.preventDefault(); const userInput = chatInput.value.trim(); if (userInput) { addChatMessage(userInput, 'user'); chatInput.value = ''; showBotTyping(true); const systemPrompt = "You are EcoBot..."; try { const botResponse = await callGeminiAPI(userInput, systemPrompt); addChatMessage(botResponse, 'bot'); } catch (error) { addChatMessage(error.message || "Sorry, I encountered an error.", 'bot'); } finally { showBotTyping(false); } } }); }
-
-            if (carbonCalculatorForm) { carbonCalculatorForm.addEventListener('submit', (e) => { e.preventDefault(); calculateFootprint(); }); }
-
-            // Join Challenge Button Logic
-            challengeButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const btn = e.currentTarget;
-                    const challengeName = btn.dataset.challengeName;
-
-                    if (!currentUser.joinedChallenges.has(challengeName)) {
-                        currentUser.joinedChallenges.add(challengeName); // Track joined challenge
-                        btn.textContent = 'Joined!';
-                        btn.disabled = true;
-                        awardGreenPoints(5); // Award points for joining
-
-                        if (challengeMessage) {
-                            challengeMessage.textContent = `Successfully joined the "${challengeName}" challenge! (+5 GP)`;
-                            challengeMessage.classList.remove('hidden', 'opacity-0');
-                            // Hide the message after a few seconds
-                            setTimeout(() => {
-                                challengeMessage.classList.add('opacity-0');
-                                // Optionally hide completely after transition
-                                setTimeout(() => challengeMessage.classList.add('hidden'), 500);
-                            }, 3000);
-                        }
-                    }
-                });
-            });
-
-
-            if (editProfileButton) {
-                editProfileButton.addEventListener('click', () => {
-                    const mode = editProfileButton.dataset.mode; const buttonIcon = editProfileButton.querySelector('i, svg'); const buttonText = editProfileButton.querySelector('span'); const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView]; const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit]; let iconChanged = false;
-                    if (mode === 'view') {
-                        profileNameEdit.value = currentUser.name; profileEmailEdit.value = currentUser.email; profileTitleEdit.value = currentUser.title; profileBioEdit.value = currentUser.bio;
-                        viewElements.forEach(el => el.classList.add('hidden')); editElements.forEach(el => el.classList.remove('hidden'));
-                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Save Changes'; editProfileButton.dataset.mode = 'edit'; editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400'); iconChanged = true;
-                    } else {
-                        currentUser.name = profileNameEdit.value.trim(); currentUser.email = profileEmailEdit.value.trim(); currentUser.title = profileTitleEdit.value.trim(); currentUser.bio = profileBioEdit.value.trim();
-                        // Update view elements directly after saving
-                        profileNameView.textContent = currentUser.name; profileEmailView.textContent = currentUser.email; profileTitleView.textContent = currentUser.title; profileBioView.textContent = currentUser.bio;
-                        updateUserDisplays(); // Update all displays including header, welcome, leaderboard
-                        viewElements.forEach(el => el.classList.remove('hidden')); editElements.forEach(el => el.classList.add('hidden'));
-                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Edit Profile'; editProfileButton.dataset.mode = 'view'; editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400'); iconChanged = true;
-                    }
-                    if (iconChanged) { renderLucideIconsInternal(); }
+            // Course Search Listener
+            if (courseSearchInput) {
+                courseSearchInput.addEventListener('input', (e) => {
+                    filterCourses(e.target.value);
                 });
             }
 
+            // Moved listener attachment to displayCourses
+            // courseLinks.forEach(link => { link.addEventListener('click', handleCourseLinkClick); });
+
+            if (backToCoursesBtn) {
+                backToCoursesBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showMaterialsMainView();
+                    // if (pageTitle) pageTitle.textContent = 'Study Materials'; // Reset title - handled in showPage now
+                });
+            }
+
+             if (dropzone) { dropzone.addEventListener('click', () => fileUpload.click()); dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-primary-light', 'bg-secondary'); }); dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); }); dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); handleFiles(e.dataTransfer.files); }); fileUpload.addEventListener('change', (e) => { handleFiles(e.target.files); }); }
+
+            if (chatForm) { chatForm.addEventListener('submit', async (e) => { e.preventDefault(); const userInput = chatInput.value.trim(); if (userInput) { addChatMessage(userInput, 'user'); chatInput.value = ''; showBotTyping(true); const systemPrompt = "You are EcoBot, a friendly AI for EcoStudy. Your expertise is ecology, sustainability, climate change, and environmental science. Keep answers clear, concise, informative. Use markdown if needed."; try { const botResponse = await callGeminiAPI(userInput, systemPrompt); addChatMessage(botResponse, 'bot'); } catch (error) { addChatMessage(error.message || "Sorry, I encountered an error.", 'bot'); } finally { showBotTyping(false); } } }); }
+
+            if (carbonCalculatorForm) { carbonCalculatorForm.addEventListener('submit', (e) => { e.preventDefault(); calculateFootprint(); }); }
+
+            challengeButtons.forEach(button => { button.addEventListener('click', (e) => { const btn = e.currentTarget; const challengeName = btn.dataset.challengeName; if (!currentUser.joinedChallenges.has(challengeName)) { currentUser.joinedChallenges.add(challengeName); btn.textContent = 'Joined!'; btn.disabled = true; awardGreenPoints(5); if (challengeMessage) { challengeMessage.textContent = `Successfully joined the "${challengeName}" challenge! (+5 GP)`; challengeMessage.classList.remove('hidden', 'opacity-0'); setTimeout(() => { challengeMessage.classList.add('opacity-0'); setTimeout(() => challengeMessage.classList.add('hidden'), 500); }, 3000); } } }); });
+
+            if (editProfileButton) { editProfileButton.addEventListener('click', () => { const mode = editProfileButton.dataset.mode; const buttonIcon = editProfileButton.querySelector('i, svg'); const buttonText = editProfileButton.querySelector('span'); const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView]; const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit]; let iconChanged = false; if (mode === 'view') { profileNameEdit.value = currentUser.name; profileEmailEdit.value = currentUser.email; profileTitleEdit.value = currentUser.title; profileBioEdit.value = currentUser.bio; viewElements.forEach(el => el.classList.add('hidden')); editElements.forEach(el => el.classList.remove('hidden')); if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Save Changes'; editProfileButton.dataset.mode = 'edit'; editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400'); iconChanged = true; } else { currentUser.name = profileNameEdit.value.trim(); currentUser.email = profileEmailEdit.value.trim(); currentUser.title = profileTitleEdit.value.trim(); currentUser.bio = profileBioEdit.value.trim(); profileNameView.textContent = currentUser.name; profileEmailView.textContent = currentUser.email; profileTitleView.textContent = currentUser.title; profileBioView.textContent = currentUser.bio; updateUserDisplays(); viewElements.forEach(el => el.classList.remove('hidden')); editElements.forEach(el => el.classList.add('hidden')); if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Edit Profile'; editProfileButton.dataset.mode = 'view'; editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400'); iconChanged = true; } if (iconChanged) { renderLucideIconsInternal(); } }); }
+
             // Initial setup
             attachDeleteListeners();
-            updateUserDisplays(); // Initial user display update
-            // Icon rendering is handled by window.onload -> initializeIconsWhenReady
+            updateUserDisplays();
+            filterCourses(''); // Display initial default courses
 
         });
 
-        // Use window.onload for the first, most critical icon rendering attempt
-        window.onload = () => {
-            console.log("Window loaded. Initializing Lucide icons when ready.");
-            initializeIconsWhenReady(); // Start the check/polling process
-        };
+        window.onload = () => { console.log("Window loaded. Initializing Lucide icons when ready."); initializeIconsWhenReady(); };
     </script>
 
 </body>
