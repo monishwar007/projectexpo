@@ -7,7 +7,6 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
-    <!-- Added defer attribute -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,6 +67,7 @@
             max-width: 75%;
             padding: 0.75rem 1rem;
             border-radius: 1rem;
+            word-wrap: break-word; /* Ensure long words break */
         }
         .chat-bubble-user {
             background-color: #38A169; /* primary-light */
@@ -125,6 +125,16 @@
         /* Calculator Result */
         #calculator-result {
             transition: opacity 0.5s ease-in-out;
+        }
+        /* Challenge Joined Message */
+        #challenge-message {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Module Item Disabled Look */
+        .module-item[disabled] {
+            cursor: not-allowed;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -196,7 +206,7 @@
                     </div>
                     <div class="relative">
                         <button id="user-menu-button">
-                            <img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="User Avatar" class="h-10 w-10 rounded-full border-2 border-primary-light transition-transform duration-200 hover:scale-105">
+                            <img id="user-avatar-header" src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="User Avatar" class="h-10 w-10 rounded-full border-2 border-primary-light transition-transform duration-200 hover:scale-105">
                         </button>
                         <div id="user-menu-dropdown" class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white py-2 shadow-lg ring-1 ring-black ring-opacity-5 hidden">
                             <div class="border-b px-4 py-3">
@@ -220,7 +230,7 @@
 
                 <!-- DASHBOARD PAGE -->
                 <div id="page-dashboard" class="page-content space-y-8">
-                    <h2 class="text-2xl font-semibold text-gray-700">Welcome back, Student!</h2>
+                    <h2 class="text-2xl font-semibold text-gray-700">Welcome back, <span id="welcome-username">Student</span>!</h2>
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                         <div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-500">Green Points</span><i data-lucide="leaf" class="h-6 w-6 text-primary-light"></i></div><p id="dashboard-gp" class="mt-2 text-3xl font-bold text-gray-800">1250</p></div>
                         <div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-500">Courses Completed</span><i data-lucide="check-circle" class="h-6 w-6 text-blue-500"></i></div><p class="mt-2 text-3xl font-bold text-gray-800">5</p></div>
@@ -231,13 +241,39 @@
                         <div class="rounded-xl bg-white p-6 shadow-lg lg:col-span-2"><h3 class="mb-4 text-xl font-semibold text-gray-700">Quick Access</h3><div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="materials"><i data-lucide="book-open" class="h-8 w-8 text-primary"></i><div class="ml-4"><h4 class="font-bold text-primary">Study Materials</h4><p class="text-sm text-gray-600">Browse your courses and files</p></div></a><a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="ecobot"><i data-lucide="bot" class="h-8 w-8 text-primary"></i><div class="ml-4"><h4 class="font-bold text-primary">Chat with EcoBot</h4><p class="text-sm text-gray-600">Ask questions and get help</p></div></a><a href="#" class="nav-item flex items-center rounded-lg bg-secondary p-4 transition hover:bg-green-100" data-page="calculator"><i data-lucide="calculator" class="h-8 w-8 text-primary"></i><div class="ml-4"><h4 class="font-bold text-primary">Carbon Calculator</h4><p class="text-sm text-gray-600">Estimate your footprint</p></div></a></div></div>
                         <div class="rounded-xl bg-white p-6 shadow-lg"><h3 class="mb-4 text-xl font-semibold text-gray-700">Offline Learning</h3><div class="flex items-center justify-between"><span class="text-gray-600">Enable Offline Mode</span><label for="offline-toggle" class="relative inline-flex cursor-pointer items-center"><input type="checkbox" id="offline-toggle" class="peer sr-only"><div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-light peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-200"></div></label></div><p class="mt-4 text-sm text-gray-500">This will download essential materials.</p></div>
                     </div>
-                    <div class="grid grid-cols-1 gap-6"><div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center"><i data-lucide="target" class="h-6 w-6 text-primary-light"></i><h3 class="ml-3 text-xl font-semibold text-gray-700">Eco Challenges</h3></div><div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"><div class="rounded-lg border border-gray-200 p-4"><div class="flex items-center"><i data-lucide="recycle" class="h-6 w-6 text-blue-500"></i><h4 class="ml-2 font-semibold text-gray-800">Plastic Free Week</h4></div><p class="mt-2 text-sm text-gray-600">Avoid single-use plastics for 7 days.</p><button class="mt-3 w-full rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 transition hover:bg-blue-200">Join Challenge</button></div><div class="rounded-lg border border-gray-200 p-4"><div class="flex items-center"><i data-lucide="droplet" class="h-6 w-6 text-teal-500"></i><h4 class="ml-2 font-semibold text-gray-800">5-Minute Showers</h4></div><p class="mt-2 text-sm text-gray-600">Keep showers under 5 minutes this week.</p><button class="mt-3 w-full rounded-md bg-teal-100 px-3 py-1 text-sm font-medium text-teal-700 transition hover:bg-teal-200">Join Challenge</button></div><div class="rounded-lg border border-gray-200 p-4"><div class="flex items-center"><i data-lucide="carrot" class="h-6 w-6 text-orange-500"></i><h4 class="ml-2 font-semibold text-gray-800">Meatless Monday</h4></div><p class="mt-2 text-sm text-gray-600">Go vegetarian or vegan for one day.</p><button class="mt-3 w-full rounded-md bg-orange-100 px-3 py-1 text-sm font-medium text-orange-700 transition hover:bg-orange-200">Join Challenge</button></div></div></div></div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="rounded-xl bg-white p-6 shadow-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="target" class="h-6 w-6 text-primary-light"></i>
+                                <h3 class="ml-3 text-xl font-semibold text-gray-700">Eco Challenges (+5 GP each)</h3>
+                            </div>
+                            <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                <div class="rounded-lg border border-gray-200 p-4">
+                                    <div class="flex items-center"><i data-lucide="recycle" class="h-6 w-6 text-blue-500"></i><h4 class="ml-2 font-semibold text-gray-800">Plastic Free Week</h4></div>
+                                    <p class="mt-2 text-sm text-gray-600">Avoid single-use plastics for 7 days.</p>
+                                    <button class="join-challenge-btn mt-3 w-full rounded-md bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 transition hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed" data-challenge-name="Plastic Free Week">Join Challenge</button>
+                                </div>
+                                <div class="rounded-lg border border-gray-200 p-4">
+                                    <div class="flex items-center"><i data-lucide="droplet" class="h-6 w-6 text-teal-500"></i><h4 class="ml-2 font-semibold text-gray-800">5-Minute Showers</h4></div>
+                                    <p class="mt-2 text-sm text-gray-600">Keep showers under 5 minutes this week.</p>
+                                    <button class="join-challenge-btn mt-3 w-full rounded-md bg-teal-100 px-3 py-1 text-sm font-medium text-teal-700 transition hover:bg-teal-200 disabled:opacity-50 disabled:cursor-not-allowed" data-challenge-name="5-Minute Showers">Join Challenge</button>
+                                </div>
+                                <div class="rounded-lg border border-gray-200 p-4">
+                                    <div class="flex items-center"><i data-lucide="carrot" class="h-6 w-6 text-orange-500"></i><h4 class="ml-2 font-semibold text-gray-800">Meatless Monday</h4></div>
+                                    <p class="mt-2 text-sm text-gray-600">Go vegetarian or vegan for one day.</p>
+                                    <button class="join-challenge-btn mt-3 w-full rounded-md bg-orange-100 px-3 py-1 text-sm font-medium text-orange-700 transition hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed" data-challenge-name="Meatless Monday">Join Challenge</button>
+                                </div>
+                            </div>
+                            <p id="challenge-message" class="mt-4 text-center text-sm font-medium text-primary hidden opacity-0"></p> <!-- Message area -->
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 gap-6"><div class="rounded-xl bg-white p-6 shadow-lg"><div class="flex items-center"><i data-lucide="sparkles" class="h-6 w-6 text-accent"></i><h3 class="ml-3 text-xl font-semibold text-gray-700">✨ Eco-Tip of the Day</h3></div><div id="eco-tip-content" class="mt-4 text-gray-600"><div id="eco-tip-loader" class="space-y-2"><div class="h-4 w-full animate-pulse-slow rounded bg-gray-200"></div><div class="h-4 w-3/4 animate-pulse-slow rounded bg-gray-200"></div></div><p id="eco-tip-text" class="hidden"></p><p id="eco-tip-error" class="hidden text-red-500">Could not load tip.</p></div></div></div>
                 </div>
 
                 <!-- STUDY MATERIALS PAGE -->
                 <div id="page-materials" class="page-content hidden space-y-6">
-                    <div id="course-grid" class="space-y-6">
+                     <!-- Content remains largely the same, ensure elements have IDs -->
+                     <div id="course-grid" class="space-y-6">
                         <h2 class="text-2xl font-semibold text-gray-700">My Courses</h2>
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                              <div class="rounded-xl bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-105"><i data-lucide="sun-moon" class="h-12 w-12 text-primary-light"></i><h3 class="mt-4 text-xl font-bold text-gray-800">Introduction to Ecology</h3><p class="mt-2 text-sm text-gray-600">Learn fundamental principles...</p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div class="rounded-full bg-primary-light p-0.5 text-center text-xs font-medium leading-none text-white" style="width: 75%">75%</div></div></div><a href="#" class="course-link mt-4 inline-block font-medium text-primary-light hover:underline" data-course="ecology">Continue Learning &rarr;</a></div>
@@ -250,7 +286,7 @@
                             <div class="rounded-xl bg-white shadow-lg lg:col-span-2"><h3 class="border-b p-6 text-xl font-semibold text-gray-700">My Uploaded Files</h3><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-gray-50"><tr><th class="px-4 py-3 text-sm font-semibold text-gray-600">Name</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Type</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Size</th><th class="px-4 py-3 text-sm font-semibold text-gray-600">Actions</th></tr></thead><tbody id="file-list" class="divide-y divide-gray-200"><tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">Ecology_Final_Notes.pdf</span></td><td class="px-4 py-3 text-sm text-gray-600">PDF Document</td><td class="px-4 py-3 text-sm text-gray-600"> 2.5 MB <span class="text-xs text-gray-500">(from 4.1 MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr><tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="image" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">Food_Web_Diagram.png</span></td><td class="px-4 py-3 text-sm text-gray-600">Image</td><td class="px-4 py-3 text-sm text-gray-600"> 0.8 MB <span class="text-xs text-gray-500">(from 1.5 MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr></tbody></table></div></div>
                         </div>
                     </div>
-                    <div id="course-details-view" class="hidden space-y-6">
+                     <div id="course-details-view" class="hidden space-y-6">
                         <button id="back-to-courses-btn" class="flex items-center text-sm font-medium text-gray-600 transition hover:text-primary"><i data-lucide="arrow-left" class="mr-2 h-4 w-4"></i> Back to Study Materials</button>
                         <div class="rounded-xl bg-white p-6 shadow-lg"><h2 id="course-detail-title" class="text-3xl font-bold text-gray-800"></h2><p id="course-detail-desc" class="mt-2 text-gray-600"></p><div class="mt-4"><span class="text-xs font-semibold text-gray-500">Progress</span><div class="mt-1 w-full rounded-full bg-gray-200"><div id="course-detail-progress" class="rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500"></div></div></div></div>
                         <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
@@ -262,8 +298,8 @@
 
                 <!-- CARBON CALCULATOR PAGE -->
                 <div id="page-calculator" class="page-content hidden space-y-6">
-                    <div class="rounded-xl bg-white p-6 text-center shadow-lg"><i data-lucide="footprints" class="mx-auto h-16 w-16 text-primary"></i><h2 class="mt-4 text-3xl font-bold text-gray-800">Carbon Footprint Calculator</h2><p class="mt-2 text-gray-600">Get a simple estimate of your environmental impact.</p><p class="mt-1 text-xs text-gray-500">(Simplified calculation for educational purposes.)</p></div>
-                    <form id="carbon-calculator-form" class="rounded-xl bg-white p-8 shadow-lg space-y-6">
+                     <div class="rounded-xl bg-white p-6 text-center shadow-lg"><i data-lucide="footprints" class="mx-auto h-16 w-16 text-primary"></i><h2 class="mt-4 text-3xl font-bold text-gray-800">Carbon Footprint Calculator</h2><p class="mt-2 text-gray-600">Get a simple estimate of your environmental impact.</p><p class="mt-1 text-xs text-gray-500">(Simplified calculation for educational purposes.)</p></div>
+                     <form id="carbon-calculator-form" class="rounded-xl bg-white p-8 shadow-lg space-y-6">
                         <div><label for="commute" class="block text-lg font-semibold text-gray-700 mb-2">1. Primary Commute?</label><select id="commute" name="commute" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50"><option value="walk_bike">Walk / Bike</option><option value="public_transport">Public Transport</option><option value="electric_vehicle">Electric Vehicle</option><option value="gas_car_small">Gas Car (Small)</option><option value="gas_car_large" selected>Gas Car (Large/SUV)</option></select></div>
                         <div><label for="diet" class="block text-lg font-semibold text-gray-700 mb-2">2. Diet Description?</label><select id="diet" name="diet" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50"><option value="vegan">Vegan</option><option value="vegetarian">Vegetarian</option><option value="pescatarian">Pescatarian</option><option value="low_meat" selected>Low Meat</option><option value="high_meat">High Meat</option></select></div>
                         <div><label for="energy" class="block text-lg font-semibold text-gray-700 mb-2">3. Home Energy Usage?</label><select id="energy" name="energy" class="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50"><option value="very_conscious">Very Conscious</option><option value="somewhat_conscious" selected>Somewhat Conscious</option><option value="not_conscious">Not Very Conscious</option></select></div>
@@ -284,14 +320,14 @@
                 <!-- LEADERBOARD PAGE -->
                 <div id="page-leaderboard" class="page-content hidden space-y-6">
                      <div class="rounded-xl bg-white p-6 text-center shadow-lg"><i data-lucide="award" class="mx-auto h-16 w-16 text-accent"></i><h2 class="mt-4 text-3xl font-bold text-gray-800">Top Students</h2><p class="mt-2 text-gray-600">See who's leading the way!</p></div>
-                     <div class="overflow-hidden rounded-xl bg-white shadow-lg"><table class="w-full text-left"><thead class="border-b bg-gray-50"><tr><th class="px-6 py-3 text-sm font-semibold text-gray-600">Rank</th><th class="px-6 py-3 text-sm font-semibold text-gray-600">Student</th><th class="px-6 py-3 text-sm font-semibold text-gray-600">Green Points</th></tr></thead><tbody class="divide-y divide-gray-200"><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-500"></i>1</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/F6E05E/000000?text=A" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Alex Johnson</span></td><td class="px-6 py-4 text-lg text-gray-800">3,450 GP</td></tr><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-gray-400"></i>2</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/C0C0C0/FFFFFF?text=M" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Maria Garcia</span></td><td class="px-6 py-4 text-lg text-gray-800">3,120 GP</td></tr><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-700"></i>3</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/CD7F32/FFFFFF?text=C" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Chen Wei</span></td><td class="px-6 py-4 text-lg text-gray-800">2,980 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">4</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/4A90E2/FFFFFF?text=R" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Ravi Patel</span></td><td class="px-6 py-4 text-gray-700">2,500 GP</td></tr><tr id="leaderboard-user-row" class="bg-secondary font-bold ring-2 ring-primary-light hover:bg-green-100"><td class="px-6 py-4 text-primary">5</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-primary">Student (You)</span></td><td id="leaderboard-user-gp" class="px-6 py-4 text-primary">1250 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">6</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/E37B40/FFFFFF?text=E" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Emily Davis</span></td><td class="px-6 py-4 text-gray-700">980 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">7</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/8E44AD/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Sam Okoye</span></td><td class="px-6 py-4 text-gray-700">760 GP</td></tr></tbody></table></div>
+                     <div class="overflow-hidden rounded-xl bg-white shadow-lg"><table class="w-full text-left"><thead class="border-b bg-gray-50"><tr><th class="px-6 py-3 text-sm font-semibold text-gray-600">Rank</th><th class="px-6 py-3 text-sm font-semibold text-gray-600">Student</th><th class="px-6 py-3 text-sm font-semibold text-gray-600">Green Points</th></tr></thead><tbody class="divide-y divide-gray-200"><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-500"></i>1</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/F6E05E/000000?text=A" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Alex Johnson</span></td><td class="px-6 py-4 text-lg text-gray-800">3,450 GP</td></tr><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-gray-400"></i>2</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/C0C0C0/FFFFFF?text=M" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Maria Garcia</span></td><td class="px-6 py-4 text-lg text-gray-800">3,120 GP</td></tr><tr class="font-semibold hover:bg-gray-50"><td class="px-6 py-4 text-lg"><i data-lucide="trophy" class="mr-2 inline-block h-5 w-5 text-yellow-700"></i>3</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/CD7F32/FFFFFF?text=C" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-800">Chen Wei</span></td><td class="px-6 py-4 text-lg text-gray-800">2,980 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">4</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/4A90E2/FFFFFF?text=R" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Ravi Patel</span></td><td class="px-6 py-4 text-gray-700">2,500 GP</td></tr><tr id="leaderboard-user-row" class="bg-secondary font-bold ring-2 ring-primary-light hover:bg-green-100"><td class="px-6 py-4 text-primary">5</td><td class="flex items-center px-6 py-4"><img id="leaderboard-user-avatar" src="https://placehold.co/40x40/38A169/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full"><span id="leaderboard-user-name" class="ml-3 text-primary">Student (You)</span></td><td id="leaderboard-user-gp" class="px-6 py-4 text-primary">1250 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">6</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/E37B40/FFFFFF?text=E" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Emily Davis</span></td><td class="px-6 py-4 text-gray-700">980 GP</td></tr><tr class="hover:bg-gray-50"><td class="px-6 py-4 text-gray-700">7</td><td class="flex items-center px-6 py-4"><img src="https://placehold.co/40x40/8E44AD/FFFFFF?text=S" alt="Avatar" class="h-10 w-10 rounded-full"><span class="ml-3 text-gray-700">Sam Okoye</span></td><td class="px-6 py-4 text-gray-700">760 GP</td></tr></tbody></table></div>
                 </div>
 
                 <!-- PROFILE PAGE -->
                 <div id="page-profile" class="page-content hidden space-y-6">
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         <div class="rounded-xl bg-white p-6 text-center shadow-lg lg:col-span-1">
-                            <img src="https://placehold.co/128x128/38A169/FFFFFF?text=S" alt="User Avatar" class="mx-auto h-32 w-32 rounded-full border-4 border-primary-light">
+                            <img id="profile-avatar" src="https://placehold.co/128x128/38A169/FFFFFF?text=S" alt="User Avatar" class="mx-auto h-32 w-32 rounded-full border-4 border-primary-light">
                             <h2 id="profile-name-view" class="mt-4 text-2xl font-bold text-gray-800">Student</h2>
                             <input id="profile-name-edit" type="text" class="hidden mt-4 w-full rounded-lg border-gray-300 p-2 text-center text-2xl font-bold text-gray-800 shadow-sm focus:border-primary-light focus:ring focus:ring-primary-light focus:ring-opacity-50" value="Student">
                             <p id="profile-email-view" class="text-gray-500">student@ecostudy.com</p>
@@ -329,61 +365,12 @@
 
     <script>
         // --- Icon Rendering ---
-        /**
-         * Renders Lucide icons if the library is available.
-         */
-        function renderLucideIconsInternal() {
-            // Check if lucide and its core properties are available
-            if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') {
-                try {
-                    lucide.createIcons();
-                    // console.log("Lucide icons rendered."); // Optional: for debugging
-                } catch (error) {
-                     console.error("Error creating Lucide icons:", error);
-                }
-            } else {
-                 // Log error if called when not ready (should only happen if called too early)
-                 console.error("Attempted to render Lucide icons, but library is not ready.");
-            }
-        }
-
-        /**
-         * Checks periodically if Lucide is ready and then calls the rendering function.
-         */
-         let lucideCheckInterval = null;
-         let lucideCheckAttempts = 0;
-         const MAX_LUCIDE_CHECKS = 20; // Check for ~2 seconds (20 * 100ms)
-
-         function initializeIconsWhenReady() {
-            if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') {
-                console.log("Lucide ready on initial check. Rendering icons.");
-                renderLucideIconsInternal();
-                if (lucideCheckInterval) {
-                    clearInterval(lucideCheckInterval); // Clear interval if it was set
-                }
-            } else {
-                 console.log("Lucide not ready yet. Starting polling check...");
-                 if (lucideCheckInterval) clearInterval(lucideCheckInterval); // Clear previous interval if any
-                 lucideCheckAttempts = 0; // Reset attempts
-
-                 lucideCheckInterval = setInterval(() => {
-                    lucideCheckAttempts++;
-                    console.log(`Lucide check attempt: ${lucideCheckAttempts}`);
-                    if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') {
-                        console.log("Lucide ready after polling. Rendering icons.");
-                        clearInterval(lucideCheckInterval);
-                        renderLucideIconsInternal();
-                    } else if (lucideCheckAttempts >= MAX_LUCIDE_CHECKS) {
-                        clearInterval(lucideCheckInterval);
-                        console.error("Lucide library failed to initialize after multiple checks.");
-                    }
-                }, 100); // Check every 100ms
-            }
-         }
-
+        function renderLucideIconsInternal() { if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') { try { lucide.createIcons(); } catch (error) { console.error("Error creating Lucide icons:", error); } } else { console.error("Attempted to render Lucide icons, but library is not ready."); } }
+        let lucideCheckInterval = null; let lucideCheckAttempts = 0; const MAX_LUCIDE_CHECKS = 20;
+        function initializeIconsWhenReady() { if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') { console.log("Lucide ready on initial check. Rendering icons."); renderLucideIconsInternal(); if (lucideCheckInterval) clearInterval(lucideCheckInterval); } else { console.log("Lucide not ready yet. Starting polling check..."); if (lucideCheckInterval) clearInterval(lucideCheckInterval); lucideCheckAttempts = 0; lucideCheckInterval = setInterval(() => { lucideCheckAttempts++; if (typeof lucide !== 'undefined' && lucide.icons && typeof lucide.createIcons === 'function') { console.log("Lucide ready after polling. Rendering icons."); clearInterval(lucideCheckInterval); renderLucideIconsInternal(); } else if (lucideCheckAttempts >= MAX_LUCIDE_CHECKS) { clearInterval(lucideCheckInterval); console.error("Lucide library failed to initialize after multiple checks."); } }, 100); } }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Element Selectors (remain the same) ---
+            // --- Element Selectors ---
             const loginPage = document.getElementById('login-page');
             const mainApp = document.getElementById('main-app');
             const loginForm = document.getElementById('login-form');
@@ -399,6 +386,9 @@
             const switchAccountButton = document.getElementById('switch-account-button');
             const dropdownUsername = document.getElementById('dropdown-username');
             const dropdownEmail = document.getElementById('dropdown-email');
+            const userAvatarHeader = document.getElementById('user-avatar-header'); // Avatar in header
+            const profileAvatar = document.getElementById('profile-avatar'); // Avatar on profile page
+            const welcomeUsername = document.getElementById('welcome-username'); // Welcome message
             const fileUpload = document.getElementById('file-upload');
             const dropzone = document.getElementById('dropzone');
             const fileList = document.getElementById('file-list');
@@ -412,6 +402,8 @@
             const dashboardFiles = document.getElementById('dashboard-files');
             const profileFiles = document.getElementById('profile-files');
             const leaderboardUserGP = document.getElementById('leaderboard-user-gp');
+            const leaderboardUserAvatar = document.getElementById('leaderboard-user-avatar');
+            const leaderboardUserName = document.getElementById('leaderboard-user-name');
             const courseGrid = document.getElementById('course-grid');
             const courseDetailsView = document.getElementById('course-details-view');
             const courseLinks = document.querySelectorAll('.course-link');
@@ -439,174 +431,251 @@
             const calculatorResultDiv = document.getElementById('calculator-result');
             const footprintValue = document.getElementById('footprint-value');
             const footprintComparison = document.getElementById('footprint-comparison');
+            const challengeButtons = document.querySelectorAll('.join-challenge-btn'); // Select challenge buttons
+            const challengeMessage = document.getElementById('challenge-message'); // Message area
 
-            // --- State (remains the same) ---
+            // --- State ---
             let currentPage = 'dashboard';
-            let currentUser = { name: 'Student', email: 'student@ecostudy.com', title: 'Ecology Enthusiast', bio: "Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.", greenPoints: 1250, filesUploaded: 12, completedModules: new Set() };
-
-            // --- Mock Course Data (remains the same) ---
-             const courses = {
-                 'ecology': { title: 'Introduction to Ecology', description: 'Learn the fundamental principles...', progress: '75%', progressColor: 'bg-primary-light', modules: [ { id: 'eco1', title: 'Module 1: What is Ecology?', status: 'completed', icon: 'check-circle' }, { id: 'eco2', title: 'Module 2: Ecosystems', status: 'active', icon: 'play-circle' }, { id: 'eco3', title: 'Module 3: Biodiversity', status: 'locked', icon: 'lock' }, { id: 'eco4', title: 'Module 4: Final Quiz', status: 'locked', icon: 'lock' } ], content: { 'Module 1: What is Ecology?': 'Ecology is...', 'Module 2: Ecosystems': 'An ecosystem includes...', 'Module 3: Biodiversity': 'Biodiversity is... (Content locked).', 'Module 4: Final Quiz': 'Test your knowledge... (Content locked).' } },
-                 'renewable': { title: 'Renewable Energy', description: 'Explore solar, wind...', progress: '40%', progressColor: 'bg-blue-500', modules: [ { id: 'ren1', title: 'Module 1: Solar Power', status: 'completed', icon: 'check-circle' }, { id: 'ren2', title: 'Module 2: Wind Energy', status: 'active', icon: 'play-circle' }, { id: 'ren3', title: 'Module 3: Geothermal', status: 'locked', icon: 'lock' } ], content: { 'Module 1: Solar Power': 'Solar power is...', 'Module 2: Wind Energy': 'Wind energy...', 'Module 3: Geothermal': 'Geothermal energy is... (Content locked).' } },
-                 'agriculture': { title: 'Sustainable Agriculture', description: 'Discover methods for farming...', progress: '10%', progressColor: 'bg-green-600', modules: [ { id: 'agr1', title: 'Module 1: Introduction', status: 'active', icon: 'play-circle' }, { id: 'agr2', title: 'Module 2: Soil Health', status: 'locked', icon: 'lock' }, { id: 'agr3', title: 'Module 3: Water Mgt.', status: 'locked', icon: 'lock' } ], content: { 'Module 1: Introduction': 'Sustainable agriculture is...', 'Module 2: Soil Health': 'Soil health is... (Content locked).', 'Module 3: Water Mgt.': 'Sustainable water management... (Content locked).' } }
+            let currentUser = { name: 'Student', email: 'student@ecostudy.com', title: 'Ecology Enthusiast', bio: "Passionate about renewable energy, sustainable agriculture, and protecting biodiversity. I'm here to learn as much as I can about our planet and how we can protect it for future generations.", greenPoints: 1250, filesUploaded: 12, completedModules: new Set(['eco1', 'ren1']), // Example completed modules
+                joinedChallenges: new Set() // Track joined challenges
             };
 
+            // --- Mock Course Data ---
+             const courses = {
+                 'ecology': { title: 'Introduction to Ecology', description: 'Learn the fundamental principles...', progress: '75%', progressColor: 'bg-primary-light', modules: [ { id: 'eco1', title: 'Module 1: What is Ecology?', status: 'default', icon: 'book' }, { id: 'eco2', title: 'Module 2: Ecosystems', status: 'default', icon: 'book' }, { id: 'eco3', title: 'Module 3: Biodiversity', status: 'default', icon: 'book' }, { id: 'eco4', title: 'Module 4: Final Quiz', status: 'default', icon: 'book' } ], content: { 'Module 1: What is Ecology?': 'Ecology is...', 'Module 2: Ecosystems': 'An ecosystem includes...', 'Module 3: Biodiversity': 'Biodiversity is...', 'Module 4: Final Quiz': 'Test your knowledge...' } },
+                 'renewable': { title: 'Renewable Energy', description: 'Explore solar, wind...', progress: '40%', progressColor: 'bg-blue-500', modules: [ { id: 'ren1', title: 'Module 1: Solar Power', status: 'default', icon: 'book' }, { id: 'ren2', title: 'Module 2: Wind Energy', status: 'default', icon: 'book' }, { id: 'ren3', title: 'Module 3: Geothermal', status: 'default', icon: 'book' } ], content: { 'Module 1: Solar Power': 'Solar power is...', 'Module 2: Wind Energy': 'Wind energy...', 'Module 3: Geothermal': 'Geothermal energy is...' } },
+                 'agriculture': { title: 'Sustainable Agriculture', description: 'Discover methods for farming...', progress: '10%', progressColor: 'bg-green-600', modules: [ { id: 'agr1', title: 'Module 1: Introduction', status: 'default', icon: 'book' }, { id: 'agr2', title: 'Module 2: Soil Health', status: 'locked', icon: 'lock' }, { id: 'agr3', title: 'Module 3: Water Mgt.', status: 'locked', icon: 'lock' } ], content: { 'Module 1: Introduction': 'Sustainable agriculture is...', 'Module 2: Soil Health': 'Soil health is... (Content locked).', 'Module 3: Water Mgt.': 'Sustainable water management... (Content locked).' } }
+            };
 
             // --- Functions ---
 
-            function updateGreenPointsDisplay() { const gpString = currentUser.greenPoints.toLocaleString(); if (greenPointsDisplay) greenPointsDisplay.textContent = gpString; if (dashboardGP) dashboardGP.textContent = gpString; if (profileGP) profileGP.textContent = gpString; if (leaderboardUserGP) leaderboardUserGP.textContent = `${gpString} GP`; updateBadges(); }
-            function updateFileCountDisplay() { const fileString = currentUser.filesUploaded.toLocaleString(); if (dashboardFiles) dashboardFiles.textContent = fileString; if (profileFiles) profileFiles.textContent = fileString; }
-            function awardGreenPoints(points) { currentUser.greenPoints += points; updateGreenPointsDisplay(); }
-            function updateBadges() { if (!badgeDisplay) return; const badges = badgeDisplay.querySelectorAll('.badge'); const gp = currentUser.greenPoints; let iconsNeedUpdate = false; badges.forEach(badge => { const title = badge.getAttribute('title') || ''; let threshold = 0; let targetIconClass = ''; let badgeClass = ''; const iconElement = badge.querySelector('i, svg'); const currentIcon = iconElement ? iconElement.getAttribute('data-lucide') : null; if (title.includes('Eco Starter')) { threshold = 1000; targetIconClass = 'sprout'; badgeClass = 'badge-bronze'; } else if (title.includes('Eco Aware')) { threshold = 2500; targetIconClass = 'leaf'; badgeClass = 'badge-silver'; } else if (title.includes('Eco Champion')) { threshold = 5000; targetIconClass = 'award'; badgeClass = 'badge-gold'; } else if (title.includes('Eco Hero')) { threshold = 10000; targetIconClass = 'shield-check'; badgeClass = 'badge-emerald'; } if (gp >= threshold) { badge.classList.remove('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.add(badgeClass); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } else { badge.classList.add('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.remove('badge-bronze', 'badge-silver', 'badge-gold', 'badge-emerald'); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } }); if (iconsNeedUpdate) { renderLucideIconsInternal(); } } // Use internal directly here
-             async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) {
-                 // *** API KEY ADDED HERE ***
-                 const apiKey = "AIzaSyAVwgQHycQ9VWoYpRbGx2AHXXhyKbZYKY0";
-                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                 const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, };
-                 try {
-                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                     if (!response.ok) {
-                         if (response.status === 429 && retries > 0) {
-                             await new Promise(resolve => setTimeout(resolve, delay));
-                             return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
-                         }
-                         // Log specific error for bad API key
-                         if (response.status === 400 || response.status === 403) {
-                              console.error(`API Key Error: ${response.statusText} (Status: ${response.status}). Please check if the API key is valid and has permissions.`);
-                         } else {
-                              console.error(`API Error: ${response.statusText} (Status: ${response.status})`);
-                         }
-                         throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`);
-                     }
-                     const result = await response.json();
-                     const candidate = result.candidates?.[0];
-                     if (candidate && candidate.content?.parts?.[0]?.text) {
-                         return candidate.content.parts[0].text;
-                     } else if (result.promptFeedback?.blockReason) {
-                         // Handle blocked content
-                         console.warn(`Gemini response blocked. Reason: ${result.promptFeedback.blockReason}`);
-                         return `My response was blocked due to safety settings. Reason: ${result.promptFeedback.blockReason}. Please try rephrasing your request.`;
-                     } else {
-                         console.error("Invalid response structure:", result);
-                         throw new Error("Invalid response structure from API.");
-                     }
-                 } catch (error) {
-                     if (retries > 0) {
-                         await new Promise(resolve => setTimeout(resolve, delay));
-                         return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2);
-                     }
-                     console.error("Gemini API call failed after retries:", error.message);
-                     // Provide a more user-friendly error in the chat
-                     throw new Error("Failed to get response from AI assistant after multiple attempts.");
-                 }
-             }
+             function updateUserDisplays() {
+                const gpString = currentUser.greenPoints.toLocaleString();
+                const fileString = currentUser.filesUploaded.toLocaleString();
+                const userInitial = currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U';
+                const avatarUrl = `https://placehold.co/40x40/38A169/FFFFFF?text=${userInitial}`;
+                const profileAvatarUrl = `https://placehold.co/128x128/38A169/FFFFFF?text=${userInitial}`;
+
+                if (greenPointsDisplay) greenPointsDisplay.textContent = gpString;
+                if (dashboardGP) dashboardGP.textContent = gpString;
+                if (profileGP) profileGP.textContent = gpString;
+                if (leaderboardUserGP) leaderboardUserGP.textContent = `${gpString} GP`;
+                if (dashboardFiles) dashboardFiles.textContent = fileString;
+                if (profileFiles) profileFiles.textContent = fileString;
+                if (welcomeUsername) welcomeUsername.textContent = currentUser.name;
+                if (dropdownUsername) dropdownUsername.textContent = currentUser.name;
+                if (dropdownEmail) dropdownEmail.textContent = currentUser.email;
+                if (leaderboardUserName) leaderboardUserName.textContent = `${currentUser.name} (You)`;
+
+                // Update Avatars
+                if (userAvatarHeader) userAvatarHeader.src = avatarUrl;
+                if (profileAvatar) profileAvatar.src = profileAvatarUrl;
+                if (leaderboardUserAvatar) leaderboardUserAvatar.src = avatarUrl;
+
+                updateBadges();
+            }
+
+            function awardGreenPoints(points) { currentUser.greenPoints += points; updateUserDisplays(); } // Changed to call updateUserDisplays
+
+            function updateBadges() {
+                // ... (badge logic remains the same, called by updateUserDisplays) ...
+                if (!badgeDisplay) return; const badges = badgeDisplay.querySelectorAll('.badge'); const gp = currentUser.greenPoints; let iconsNeedUpdate = false; badges.forEach(badge => { const title = badge.getAttribute('title') || ''; let threshold = 0; let targetIconClass = ''; let badgeClass = ''; const iconElement = badge.querySelector('i, svg'); const currentIcon = iconElement ? iconElement.getAttribute('data-lucide') : null; if (title.includes('Eco Starter')) { threshold = 1000; targetIconClass = 'sprout'; badgeClass = 'badge-bronze'; } else if (title.includes('Eco Aware')) { threshold = 2500; targetIconClass = 'leaf'; badgeClass = 'badge-silver'; } else if (title.includes('Eco Champion')) { threshold = 5000; targetIconClass = 'award'; badgeClass = 'badge-gold'; } else if (title.includes('Eco Hero')) { threshold = 10000; targetIconClass = 'shield-check'; badgeClass = 'badge-emerald'; } if (gp >= threshold) { badge.classList.remove('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.add(badgeClass); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } else { badge.classList.add('opacity-30', 'grayscale', 'bg-gray-200'); badge.classList.remove('badge-bronze', 'badge-silver', 'badge-gold', 'badge-emerald'); if (iconElement && currentIcon !== targetIconClass) { iconElement.setAttribute('data-lucide', targetIconClass); iconsNeedUpdate = true; } } }); if (iconsNeedUpdate) { renderLucideIconsInternal(); }
+            }
+
+            async function callGeminiAPI(userQuery, systemPrompt, retries = 3, delay = 1000) { const apiKey = "AIzaSyAVwgQHycQ9VWoYpRbGx2AHXXhyKbZYKY0"; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`; const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, }; try { const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { if (response.status === 429 && retries > 0) { await new Promise(resolve => setTimeout(resolve, delay)); return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2); } if (response.status === 400 || response.status === 403) { console.error(`API Key Error: ${response.statusText} (Status: ${response.status}). Check key.`); } else { console.error(`API Error: ${response.statusText} (Status: ${response.status})`); } throw new Error(`API Error: ${response.statusText} (Status: ${response.status})`); } const result = await response.json(); const candidate = result.candidates?.[0]; if (candidate && candidate.content?.parts?.[0]?.text) { return candidate.content.parts[0].text; } else if (result.promptFeedback?.blockReason) { console.warn(`Gemini response blocked. Reason: ${result.promptFeedback.blockReason}`); return `My response was blocked due to safety settings. Reason: ${result.promptFeedback.blockReason}. Please try rephrasing your request.`; } else { console.error("Invalid response structure:", result); throw new Error("Invalid response structure from API."); } } catch (error) { if (retries > 0) { await new Promise(resolve => setTimeout(resolve, delay)); return callGeminiAPI(userQuery, systemPrompt, retries - 1, delay * 2); } console.error("Gemini API call failed after retries:", error.message); throw new Error("Failed to get response from AI assistant after multiple attempts."); } }
             async function fetchEcoTip() { if (!ecoTipLoader || !ecoTipText || !ecoTipError) return; ecoTipLoader.classList.remove('hidden'); ecoTipText.classList.add('hidden'); ecoTipError.classList.add('hidden'); const systemPrompt = "You are a sustainability expert. Provide a single, unique, and concise sustainability tip (2-3 sentences max) suitable for a student. Be encouraging and positive. Do not use markdown."; const userQuery = "Give me today's eco-tip."; try { const tip = await callGeminiAPI(userQuery, systemPrompt); ecoTipText.textContent = tip; ecoTipText.classList.remove('hidden'); } catch (error) { ecoTipError.textContent = "Could not load tip. " + error.message; ecoTipError.classList.remove('hidden'); } finally { ecoTipLoader.classList.add('hidden'); } }
             function toggleMobileMenu() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
-            function showPage(pageId) { pageContents.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(`page-${pageId}`); if (targetPage) targetPage.classList.remove('hidden'); navItems.forEach(item => { item.classList.remove('active'); if (item.dataset.page === pageId) item.classList.add('active'); }); let title = ''; const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`); if (sidebarLink && sidebarLink.querySelector('span')) { title = sidebarLink.querySelector('span').textContent; } else if (pageId === 'profile') { title = 'My Profile'; } else { title = pageId.charAt(0).toUpperCase() + pageId.slice(1); } pageTitle.textContent = title; currentPage = pageId; if (!sidebar.classList.contains('-translate-x-full')) toggleMobileMenu(); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); renderLucideIconsInternal(); } // Use internal directly
+            function showPage(pageId) { pageContents.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(`page-${pageId}`); if (targetPage) targetPage.classList.remove('hidden'); navItems.forEach(item => { item.classList.remove('active'); if (item.dataset.page === pageId) item.classList.add('active'); }); let title = ''; const sidebarLink = document.querySelector(`#sidebar .nav-item[data-page="${pageId}"]`); if (sidebarLink && sidebarLink.querySelector('span')) { title = sidebarLink.querySelector('span').textContent; } else if (pageId === 'profile') { title = 'My Profile'; } else { title = pageId.charAt(0).toUpperCase() + pageId.slice(1); } pageTitle.textContent = title; currentPage = pageId; if (!sidebar.classList.contains('-translate-x-full')) toggleMobileMenu(); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); renderLucideIconsInternal(); }
             function showCourseGrid() { if (courseGrid && courseDetailsView) { courseDetailsView.classList.add('hidden'); courseGrid.classList.remove('hidden'); } if (pageTitle) pageTitle.textContent = 'Study Materials'; }
-            function showCourse(courseId) { const course = courses[courseId]; if (!course || !courseGrid || !courseDetailsView || !pageTitle || !courseModuleList) return; courseGrid.classList.add('hidden'); courseDetailsView.classList.remove('hidden'); pageTitle.textContent = course.title; courseDetailTitle.textContent = course.title; courseDetailDesc.textContent = course.description; courseDetailProgress.style.width = course.progress; courseDetailProgress.textContent = course.progress; courseDetailProgress.className = `rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500 ${course.progressColor}`; courseModuleList.innerHTML = ''; let activeModuleTitle = ''; course.modules.forEach(module => { let itemClass = 'text-gray-700 hover:bg-gray-50'; let iconColor = 'text-gray-500'; let isClickable = true; const isCompleted = currentUser.completedModules.has(module.id); let displayStatus = module.status; if (isCompleted) { displayStatus = 'completed'; } let currentIcon = module.icon; if (displayStatus === 'active') { itemClass = 'text-white bg-primary'; iconColor = 'text-white'; activeModuleTitle = module.title; currentIcon = 'play-circle'; } else if (displayStatus === 'completed') { itemClass = 'text-gray-500 hover:bg-gray-50'; iconColor = 'text-primary-light'; currentIcon = 'check-circle'; if (!activeModuleTitle) activeModuleTitle = module.title; } else if (displayStatus === 'locked') { itemClass = 'text-gray-400 cursor-not-allowed'; iconColor = 'text-gray-400'; isClickable = false; currentIcon = 'lock'; } const moduleHtml = `<li class="module-item flex items-center p-3 text-sm font-medium rounded-lg cursor-pointer ${itemClass}" data-module-id="${module.id}" data-module-title="${module.title}" data-status="${displayStatus}" ${!isClickable ? 'disabled' : ''}><i data-lucide="${currentIcon}" class="mr-3 h-5 w-5 ${iconColor}"></i><span>${module.title}</span></li>`; courseModuleList.innerHTML += moduleHtml; }); if (activeModuleTitle && course.content[activeModuleTitle]) { courseContentTitle.textContent = activeModuleTitle; courseContentText.textContent = course.content[activeModuleTitle]; } else if (course.modules.length > 0) { const firstModule = course.modules[0]; if(firstModule.status !== 'locked') { courseContentTitle.textContent = firstModule.title; courseContentText.textContent = course.content[firstModule.title]; const firstModuleElement = courseModuleList.querySelector(`[data-module-id="${firstModule.id}"]`); if (firstModuleElement) firstModuleElement.classList.add('text-white', 'bg-primary'); } else { courseContentTitle.textContent = 'Select a module'; courseContentText.textContent = 'Please select an unlocked module from the list.'; } } else { courseContentTitle.textContent = 'No modules found'; courseContentText.textContent = 'This course currently has no modules.'; } addModuleClickListeners(courseId); renderLucideIconsInternal(); } // Use internal directly
-            function addModuleClickListeners(courseId) { const course = courses[courseId]; if (!course) return; const moduleItems = courseModuleList.querySelectorAll('.module-item'); moduleItems.forEach(item => { item.addEventListener('click', (e) => { const clickedItem = e.currentTarget; const moduleId = clickedItem.dataset.moduleId; const moduleTitle = clickedItem.dataset.moduleTitle; const status = clickedItem.dataset.status; if (status === 'locked') return; if (course.content[moduleTitle]) { courseContentTitle.textContent = moduleTitle; courseContentText.textContent = course.content[moduleTitle]; } moduleItems.forEach(mi => mi.classList.remove('text-white', 'bg-primary')); clickedItem.classList.add('text-white', 'bg-primary'); if (!currentUser.completedModules.has(moduleId)) { currentUser.completedModules.add(moduleId); awardGreenPoints(50); const iconElement = clickedItem.querySelector('i, svg'); let iconChanged = false; if (iconElement) { if (iconElement.getAttribute('data-lucide') !== 'check-circle') { iconElement.setAttribute('data-lucide', 'check-circle'); iconChanged = true; } iconElement.classList.remove('text-white'); iconElement.classList.add('text-primary-light'); } clickedItem.dataset.status = 'completed'; if (iconChanged) { renderLucideIconsInternal(); } } }); }); } // Use internal directly
-            function handleFiles(files) { if (!files || !files.length || !fileList) return; let iconsNeedUpdate = false; Array.from(files).forEach(file => { const compressedSizeMB = (file.size / 1024 / 1024); const originalSizeMB = compressedSizeMB * (1.5 + Math.random()); const compressedSizeStr = compressedSizeMB.toFixed(2); const originalSizeStr = originalSizeMB.toFixed(1); let fileType = file.type; let icon = 'file'; if (fileType.includes('pdf')) { icon = 'file-text'; fileType = 'PDF Document'; } else if (fileType.includes('image')) { icon = 'image'; fileType = 'Image'; } else if (fileType.includes('document') || fileType.includes('word')) { icon = 'file-check-2'; fileType = 'Document'; } const newRowHtml = `<tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="${icon}" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">${file.name}</span></td><td class="px-4 py-3 text-sm text-gray-600">${fileType}</td><td class="px-4 py-3 text-sm text-gray-600">${compressedSizeStr} MB <span class="text-xs text-gray-500">(from ${originalSizeStr} MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr>`; fileList.insertAdjacentHTML('beforeend', newRowHtml); awardGreenPoints(10); currentUser.filesUploaded++; updateFileCountDisplay(); iconsNeedUpdate = true; }); attachDeleteListeners(); if (iconsNeedUpdate) { renderLucideIconsInternal(); } } // Use internal directly
-             function attachDeleteListeners() { const deleteButtons = fileList.querySelectorAll('.delete-file-btn'); deleteButtons.forEach(button => { button.removeEventListener('click', handleDeleteFile); button.addEventListener('click', handleDeleteFile); }); }
-             function handleDeleteFile(e) { const row = e.currentTarget.closest('tr'); if (row) { row.remove(); currentUser.filesUploaded--; updateFileCountDisplay();} } // Added counter update
-            function addChatMessage(text, sender) { const messageDiv = document.createElement('div'); messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : ''}`; const bubble = document.createElement('div'); bubble.className = `chat-bubble ${sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}`; bubble.textContent = text; messageDiv.appendChild(bubble); if (botTyping && botTyping.parentElement === chatWindow) { chatWindow.insertBefore(messageDiv, botTyping); } else { chatWindow.appendChild(messageDiv); } chatWindow.scrollTop = chatWindow.scrollHeight; }
-            function showBotTyping(show) { if (botTyping && chatWindow) { if (show) { chatWindow.appendChild(botTyping); botTyping.classList.remove('hidden'); } else { botTyping.classList.add('hidden'); } chatWindow.scrollTop = chatWindow.scrollHeight; } }
-             function calculateFootprint() { const commuteFactors = { walk_bike: 0.1, public_transport: 1.5, electric_vehicle: 1.0, gas_car_small: 3.5, gas_car_large: 5.0 }; const dietFactors = { vegan: 1.5, vegetarian: 2.0, pescatarian: 2.5, low_meat: 3.5, high_meat: 5.0 }; const energyFactors = { very_conscious: 1.0, somewhat_conscious: 2.0, not_conscious: 3.5 }; const commuteValue = document.getElementById('commute').value; const dietValue = document.getElementById('diet').value; const energyValue = document.getElementById('energy').value; const totalFootprint = (commuteFactors[commuteValue] * 0.4) + (dietFactors[dietValue] * 0.4) + (energyFactors[energyValue] * 0.2); const footprintTonnes = (totalFootprint * 1.5).toFixed(1); footprintValue.textContent = `${footprintTonnes} tonnes CO2e / year`; let comparisonText = ''; const avgFootprint = 16; if (footprintTonnes < avgFootprint / 2) { comparisonText = "That's significantly below the average!"; } else if (footprintTonnes < avgFootprint * 0.9) { comparisonText = "You're below the average. Well done!"; } else if (footprintTonnes < avgFootprint * 1.1) { comparisonText = "Your footprint is around the average."; } else { comparisonText = "Your footprint is above the average."; } footprintComparison.textContent = comparisonText; calculatorResultDiv.classList.remove('hidden'); setTimeout(() => { calculatorResultDiv.classList.remove('opacity-0'); }, 10); }
+             function showCourse(courseId) {
+                 const course = courses[courseId];
+                 if (!course || !courseGrid || !courseDetailsView || !pageTitle || !courseModuleList) return;
+                 courseGrid.classList.add('hidden'); courseDetailsView.classList.remove('hidden');
+                 pageTitle.textContent = course.title; courseDetailTitle.textContent = course.title; courseDetailDesc.textContent = course.description; courseDetailProgress.style.width = course.progress; courseDetailProgress.textContent = course.progress; courseDetailProgress.className = `rounded-full p-0.5 text-center text-xs font-medium leading-none text-white transition-all duration-500 ${course.progressColor}`;
+                 courseModuleList.innerHTML = ''; let activeModuleTitle = ''; let firstAvailableModule = null;
+                 course.modules.forEach(module => {
+                     let itemClass = 'text-gray-700 hover:bg-gray-50'; let iconColor = 'text-gray-500'; let isClickable = true;
+                     const isCompleted = currentUser.completedModules.has(module.id);
+                     let displayStatus = module.status === 'locked' ? 'locked' : (isCompleted ? 'completed' : 'active'); // Determine status based on completion and lock status
+                     let currentIcon = module.icon;
 
+                     if (displayStatus === 'active') {
+                         itemClass = 'text-gray-700 hover:bg-gray-50'; // Default active is just hoverable
+                         iconColor = 'text-gray-500';
+                         currentIcon = 'play-circle'; // Show play for active, uncompleted
+                         if (!firstAvailableModule) firstAvailableModule = module; // Track first playable
+                     } else if (displayStatus === 'completed') {
+                         itemClass = 'text-gray-500 hover:bg-gray-50';
+                         iconColor = 'text-primary-light';
+                         currentIcon = 'check-circle';
+                         if (!firstAvailableModule) firstAvailableModule = module; // Completed is also available
+                     } else if (displayStatus === 'locked') {
+                         itemClass = 'text-gray-400 cursor-not-allowed';
+                         iconColor = 'text-gray-400';
+                         isClickable = false;
+                         currentIcon = 'lock';
+                     }
+
+                     const moduleHtml = `<li class="module-item flex items-center p-3 text-sm font-medium rounded-lg ${isClickable ? 'cursor-pointer' : ''} ${itemClass}" data-module-id="${module.id}" data-module-title="${module.title}" data-status="${displayStatus}" ${!isClickable ? 'disabled' : ''}><i data-lucide="${currentIcon}" class="mr-3 h-5 w-5 ${iconColor}"></i><span>${module.title}</span></li>`;
+                     courseModuleList.innerHTML += moduleHtml;
+                 });
+
+                 // Highlight and show content for the first available module by default
+                 if (firstAvailableModule && course.content[firstAvailableModule.title]) {
+                     activeModuleTitle = firstAvailableModule.title;
+                     courseContentTitle.textContent = activeModuleTitle;
+                     courseContentText.textContent = course.content[activeModuleTitle];
+                     const firstModuleElement = courseModuleList.querySelector(`[data-module-id="${firstAvailableModule.id}"]`);
+                     if (firstModuleElement) {
+                         firstModuleElement.classList.add('text-white', 'bg-primary');
+                         const iconEl = firstModuleElement.querySelector('i, svg');
+                         if(iconEl) iconEl.classList.add('text-white'); // Make icon white too
+                     }
+                 } else {
+                     courseContentTitle.textContent = 'Select a module';
+                     courseContentText.textContent = 'Please select an unlocked module from the list.';
+                 }
+
+                 addModuleClickListeners(courseId); renderLucideIconsInternal();
+             }
+
+             function addModuleClickListeners(courseId) {
+                 const course = courses[courseId]; if (!course || !courseModuleList) return;
+                 const moduleItems = courseModuleList.querySelectorAll('.module-item');
+                 moduleItems.forEach(item => {
+                     item.addEventListener('click', (e) => {
+                         const clickedItem = e.currentTarget;
+                         if (clickedItem.hasAttribute('disabled')) return; // Check disabled attribute
+
+                         const moduleId = clickedItem.dataset.moduleId;
+                         const moduleTitle = clickedItem.dataset.moduleTitle;
+                         const status = clickedItem.dataset.status;
+
+                         if (course.content[moduleTitle]) {
+                             courseContentTitle.textContent = moduleTitle;
+                             courseContentText.textContent = course.content[moduleTitle];
+                         }
+
+                         // Update highlight
+                         moduleItems.forEach(mi => {
+                            mi.classList.remove('text-white', 'bg-primary');
+                            const iconEl = mi.querySelector('i, svg');
+                            if(iconEl) iconEl.classList.remove('text-white'); // Remove white from all icons
+                            // Reset completed icon color if not the selected one
+                            if (mi !== clickedItem && mi.dataset.status === 'completed') {
+                                if(iconEl) iconEl.classList.add('text-primary-light');
+                            }
+                         });
+                         clickedItem.classList.add('text-white', 'bg-primary');
+                         const clickedIconEl = clickedItem.querySelector('i, svg');
+                         if(clickedIconEl) clickedIconEl.classList.add('text-white'); // Add white to selected icon
+
+                         // Award points only once on first click/completion
+                         if (!currentUser.completedModules.has(moduleId) && status !== 'completed') {
+                            currentUser.completedModules.add(moduleId);
+                            awardGreenPoints(50);
+                            clickedItem.dataset.status = 'completed'; // Update status visually
+                            let iconChanged = false;
+                            if (clickedIconEl) {
+                                if (clickedIconEl.getAttribute('data-lucide') !== 'check-circle') {
+                                    clickedIconEl.setAttribute('data-lucide', 'check-circle');
+                                    iconChanged = true;
+                                }
+                                clickedIconEl.classList.add('text-white'); // Ensure it's white now
+                                clickedIconEl.classList.remove('text-primary-light'); // Just in case
+                            }
+                             if (iconChanged) { renderLucideIconsInternal(); }
+                         }
+                     });
+                 });
+             }
+
+            function handleFiles(files) { if (!files || !files.length || !fileList) return; let iconsNeedUpdate = false; Array.from(files).forEach(file => { const compressedSizeMB = (file.size / 1024 / 1024); const originalSizeMB = compressedSizeMB * (1.5 + Math.random()); const compressedSizeStr = compressedSizeMB.toFixed(2); const originalSizeStr = originalSizeMB.toFixed(1); let fileType = file.type; let icon = 'file'; if (fileType.includes('pdf')) { icon = 'file-text'; fileType = 'PDF Document'; } else if (fileType.includes('image')) { icon = 'image'; fileType = 'Image'; } else if (fileType.includes('document') || fileType.includes('word')) { icon = 'file-check-2'; fileType = 'Document'; } const newRowHtml = `<tr class="hover:bg-gray-50"><td class="flex items-center px-4 py-3"><i data-lucide="${icon}" class="h-5 w-5 text-gray-500"></i><span class="ml-3 font-medium text-gray-800">${file.name}</span></td><td class="px-4 py-3 text-sm text-gray-600">${fileType}</td><td class="px-4 py-3 text-sm text-gray-600">${compressedSizeStr} MB <span class="text-xs text-gray-500">(from ${originalSizeStr} MB)</span></td><td class="px-4 py-3"><button class="rounded-md p-2 text-gray-500 transition hover:bg-gray-100 hover:text-primary"><i data-lucide="download" class="h-5 w-5"></i></button><button class="delete-file-btn rounded-md p-2 text-gray-500 transition hover:bg-red-100 hover:text-red-600 ml-1"><i data-lucide="trash-2" class="h-5 w-5"></i></button></td></tr>`; fileList.insertAdjacentHTML('beforeend', newRowHtml); awardGreenPoints(10); currentUser.filesUploaded++; updateUserDisplays(); iconsNeedUpdate = true; }); attachDeleteListeners(); if (iconsNeedUpdate) { renderLucideIconsInternal(); } } // Changed to call updateUserDisplays
+            function attachDeleteListeners() { const deleteButtons = fileList.querySelectorAll('.delete-file-btn'); deleteButtons.forEach(button => { button.removeEventListener('click', handleDeleteFile); button.addEventListener('click', handleDeleteFile); }); }
+            function handleDeleteFile(e) { const row = e.currentTarget.closest('tr'); if (row) { row.remove(); currentUser.filesUploaded--; updateUserDisplays();} } // Changed to call updateUserDisplays
+            function addChatMessage(text, sender) { const messageDiv = document.createElement('div'); messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : ''}`; const bubble = document.createElement('div'); bubble.className = `chat-bubble ${sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}`; bubble.textContent = text; messageDiv.appendChild(bubble); if (botTyping && botTyping.parentElement === chatWindow) { chatWindow.insertBefore(messageDiv, botTyping); } else if (chatWindow) { chatWindow.appendChild(messageDiv); } if (chatWindow) chatWindow.scrollTop = chatWindow.scrollHeight; }
+            function showBotTyping(show) { if (botTyping && chatWindow) { if (show) { chatWindow.appendChild(botTyping); botTyping.classList.remove('hidden'); } else { botTyping.classList.add('hidden'); } chatWindow.scrollTop = chatWindow.scrollHeight; } }
+            function calculateFootprint() { const commuteFactors = { walk_bike: 0.1, public_transport: 1.5, electric_vehicle: 1.0, gas_car_small: 3.5, gas_car_large: 5.0 }; const dietFactors = { vegan: 1.5, vegetarian: 2.0, pescatarian: 2.5, low_meat: 3.5, high_meat: 5.0 }; const energyFactors = { very_conscious: 1.0, somewhat_conscious: 2.0, not_conscious: 3.5 }; const commuteValue = document.getElementById('commute').value; const dietValue = document.getElementById('diet').value; const energyValue = document.getElementById('energy').value; const totalFootprint = (commuteFactors[commuteValue] * 0.4) + (dietFactors[dietValue] * 0.4) + (energyFactors[energyValue] * 0.2); const footprintTonnes = (totalFootprint * 1.5).toFixed(1); footprintValue.textContent = `${footprintTonnes} tonnes CO2e / year`; let comparisonText = ''; const avgFootprint = 16; if (footprintTonnes < avgFootprint / 2) { comparisonText = "That's significantly below the average!"; } else if (footprintTonnes < avgFootprint * 0.9) { comparisonText = "You're below the average. Well done!"; } else if (footprintTonnes < avgFootprint * 1.1) { comparisonText = "Your footprint is around the average."; } else { comparisonText = "Your footprint is above the average."; } footprintComparison.textContent = comparisonText; calculatorResultDiv.classList.remove('hidden'); setTimeout(() => { calculatorResultDiv.classList.remove('opacity-0'); }, 10); }
 
             // --- Event Listeners ---
+            loginForm.addEventListener('submit', (e) => { e.preventDefault(); loginPage.classList.add('hidden'); mainApp.classList.remove('hidden'); mainApp.classList.add('flex'); showPage('dashboard'); fetchEcoTip(); updateUserDisplays(); initializeIconsWhenReady(); }); // Ensure icons are ready after login
 
-            // Login
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault(); loginPage.classList.add('hidden'); mainApp.classList.remove('hidden'); mainApp.classList.add('flex');
-                showPage('dashboard'); fetchEcoTip(); updateGreenPointsDisplay(); updateFileCountDisplay(); updateBadges();
-                // Initial icon render is now handled by initializeIconsWhenReady called from window.onload
-            });
-
-            // Logout
-            function doLogout() { mainApp.classList.add('hidden'); mainApp.classList.remove('flex'); loginPage.classList.remove('hidden'); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); }
+            function doLogout() { mainApp.classList.add('hidden'); mainApp.classList.remove('flex'); loginPage.classList.remove('hidden'); if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) userMenuDropdown.classList.add('hidden'); currentUser = { name: 'Student', email: 'student@ecostudy.com', title: 'Ecology Enthusiast', bio: "Passionate...", greenPoints: 1250, filesUploaded: 12, completedModules: new Set(['eco1', 'ren1']), joinedChallenges: new Set() }; // Reset user on logout
+                 // Reset challenge buttons visually
+                 challengeButtons.forEach(btn => {
+                     btn.disabled = false;
+                     btn.textContent = 'Join Challenge';
+                 });
+             }
             if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
             if (switchAccountButton) switchAccountButton.addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
 
-            // Mobile Menu
             if (burgerBtn) burgerBtn.addEventListener('click', toggleMobileMenu);
             if (overlay) overlay.addEventListener('click', toggleMobileMenu);
 
-            // User Menu
-            if (userMenuButton) {
-                userMenuButton.addEventListener('click', (e) => {
-                    e.stopPropagation(); userMenuDropdown.classList.toggle('hidden');
-                    renderLucideIconsInternal(); // Render icons in dropdown if opened
-                });
-            }
+            if (userMenuButton) { userMenuButton.addEventListener('click', (e) => { e.stopPropagation(); userMenuDropdown.classList.toggle('hidden'); renderLucideIconsInternal(); }); }
             window.addEventListener('click', (e) => { if (userMenuDropdown && !userMenuDropdown.classList.contains('hidden')) { if (userMenuButton && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) { userMenuDropdown.classList.add('hidden'); } } });
 
-            // Navigation
             navItems.forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); const pageId = item.dataset.page; if (pageId) showPage(pageId); }); });
 
-            // Study Materials Page Events
-            if (dropzone) {
-                dropzone.addEventListener('click', () => fileUpload.click());
-                dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-primary-light', 'bg-secondary'); });
-                dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); });
-                dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); handleFiles(e.dataTransfer.files); });
-                fileUpload.addEventListener('change', (e) => { handleFiles(e.target.files); });
-            }
+            if (dropzone) { dropzone.addEventListener('click', () => fileUpload.click()); dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-primary-light', 'bg-secondary'); }); dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); }); dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('border-primary-light', 'bg-secondary'); handleFiles(e.dataTransfer.files); }); fileUpload.addEventListener('change', (e) => { handleFiles(e.target.files); }); }
             courseLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const courseId = e.currentTarget.dataset.course; if (courseId) showCourse(courseId); }); });
             if (backToCoursesBtn) backToCoursesBtn.addEventListener('click', (e) => { e.preventDefault(); showCourseGrid(); });
 
-            // EcoBot Page Events
-            if (chatForm) {
-                chatForm.addEventListener('submit', async (e) => {
-                    e.preventDefault(); const userInput = chatInput.value.trim();
-                    if (userInput) {
-                        addChatMessage(userInput, 'user'); chatInput.value = ''; showBotTyping(true);
-                        const systemPrompt = "You are EcoBot, a friendly and knowledgeable AI assistant for the EcoStudy platform. Your expertise is in ecology, sustainability, climate change, and environmental science. You are helpful to students. Keep your answers clear, concise, and informative. Use markdown for formatting if needed.";
-                        try {
-                            const botResponse = await callGeminiAPI(userInput, systemPrompt);
-                            addChatMessage(botResponse, 'bot');
-                        } catch (error) {
-                             addChatMessage(error.message || "Sorry, I encountered an error.", 'bot'); // Display the error message from the API call
-                        } finally {
-                            showBotTyping(false);
+            if (chatForm) { chatForm.addEventListener('submit', async (e) => { e.preventDefault(); const userInput = chatInput.value.trim(); if (userInput) { addChatMessage(userInput, 'user'); chatInput.value = ''; showBotTyping(true); const systemPrompt = "You are EcoBot..."; try { const botResponse = await callGeminiAPI(userInput, systemPrompt); addChatMessage(botResponse, 'bot'); } catch (error) { addChatMessage(error.message || "Sorry, I encountered an error.", 'bot'); } finally { showBotTyping(false); } } }); }
+
+            if (carbonCalculatorForm) { carbonCalculatorForm.addEventListener('submit', (e) => { e.preventDefault(); calculateFootprint(); }); }
+
+            // Join Challenge Button Logic
+            challengeButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const btn = e.currentTarget;
+                    const challengeName = btn.dataset.challengeName;
+
+                    if (!currentUser.joinedChallenges.has(challengeName)) {
+                        currentUser.joinedChallenges.add(challengeName); // Track joined challenge
+                        btn.textContent = 'Joined!';
+                        btn.disabled = true;
+                        awardGreenPoints(5); // Award points for joining
+
+                        if (challengeMessage) {
+                            challengeMessage.textContent = `Successfully joined the "${challengeName}" challenge! (+5 GP)`;
+                            challengeMessage.classList.remove('hidden', 'opacity-0');
+                            // Hide the message after a few seconds
+                            setTimeout(() => {
+                                challengeMessage.classList.add('opacity-0');
+                                // Optionally hide completely after transition
+                                setTimeout(() => challengeMessage.classList.add('hidden'), 500);
+                            }, 3000);
                         }
                     }
                 });
-            }
+            });
 
 
-            // Carbon Calculator Event
-            if (carbonCalculatorForm) { carbonCalculatorForm.addEventListener('submit', (e) => { e.preventDefault(); calculateFootprint(); }); }
-
-            // Profile Page Events
             if (editProfileButton) {
                 editProfileButton.addEventListener('click', () => {
-                    const mode = editProfileButton.dataset.mode; const buttonIcon = editProfileButton.querySelector('i, svg'); const buttonText = editProfileButton.querySelector('span'); const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView]; const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit];
-                    let iconChanged = false;
+                    const mode = editProfileButton.dataset.mode; const buttonIcon = editProfileButton.querySelector('i, svg'); const buttonText = editProfileButton.querySelector('span'); const viewElements = [profileNameView, profileEmailView, profileTitleView, profileBioView]; const editElements = [profileNameEdit, profileEmailEdit, profileTitleEdit, profileBioEdit]; let iconChanged = false;
                     if (mode === 'view') {
                         profileNameEdit.value = currentUser.name; profileEmailEdit.value = currentUser.email; profileTitleEdit.value = currentUser.title; profileBioEdit.value = currentUser.bio;
                         viewElements.forEach(el => el.classList.add('hidden')); editElements.forEach(el => el.classList.remove('hidden'));
-                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Save Changes'; editProfileButton.dataset.mode = 'edit';
-                        editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400');
-                        iconChanged = true;
+                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="save" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Save Changes'; editProfileButton.dataset.mode = 'edit'; editProfileButton.classList.remove('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.add('bg-accent', 'text-primary', 'hover:bg-yellow-400'); iconChanged = true;
                     } else {
                         currentUser.name = profileNameEdit.value.trim(); currentUser.email = profileEmailEdit.value.trim(); currentUser.title = profileTitleEdit.value.trim(); currentUser.bio = profileBioEdit.value.trim();
+                        // Update view elements directly after saving
                         profileNameView.textContent = currentUser.name; profileEmailView.textContent = currentUser.email; profileTitleView.textContent = currentUser.title; profileBioView.textContent = currentUser.bio;
-                        if(dropdownUsername) dropdownUsername.textContent = currentUser.name; if(dropdownEmail) dropdownEmail.textContent = currentUser.email;
+                        updateUserDisplays(); // Update all displays including header, welcome, leaderboard
                         viewElements.forEach(el => el.classList.remove('hidden')); editElements.forEach(el => el.classList.add('hidden'));
-                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Edit Profile'; editProfileButton.dataset.mode = 'view';
-                        editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400');
-                        iconChanged = true;
+                        if (buttonIcon) buttonIcon.remove(); editProfileButton.insertAdjacentHTML('afterbegin', '<i data-lucide="edit-2" class="mr-2 inline-block h-4 w-4"></i>'); buttonText.textContent = 'Edit Profile'; editProfileButton.dataset.mode = 'view'; editProfileButton.classList.add('bg-primary', 'hover:bg-primary-dark'); editProfileButton.classList.remove('bg-accent', 'text-primary', 'hover:bg-yellow-400'); iconChanged = true;
                     }
-                    if (iconChanged) {
-                        renderLucideIconsInternal(); // Use internal directly
-                    }
+                    if (iconChanged) { renderLucideIconsInternal(); }
                 });
             }
 
-             // Initial setup on load
-             attachDeleteListeners();
-             // Initial icon rendering is handled by initializeIconsWhenReady called from window.onload
+            // Initial setup
+            attachDeleteListeners();
+            updateUserDisplays(); // Initial user display update
+            // Icon rendering is handled by window.onload -> initializeIconsWhenReady
 
         });
 
